@@ -1,2 +1,3 @@
 SQLAlchemy>=1.2.1,<1.3.0
 -e git+https://github.com/hozn/GeoAlchemy@12983cd#egg=GeoAlchemy
+alembic==0.9.7

@@ -3,9 +3,13 @@ import warnings
 import json
 from typing import Dict, Any
 
+from alembic import command
+
 import sqlalchemy as sa
+from freezing.model.exc import DatabaseVersionError
 from sqlalchemy import orm, inspect, create_engine
 
+from sqlalchemy.engine import Engine
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.pool import Pool
@@ -16,6 +20,10 @@ from . import meta, migrationsutil
 from .autolog import log
 
 Base = declarative_base(metadata=meta.metadata)
+
+class _SqlView:
+    """ Empty class used to indicate that this is a SQL View and not to be created. """
+    pass
 
 
 def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, check_version:bool=True):
@@ -58,14 +66,24 @@ def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, c
     if fresh_db:
         command.stamp(alembic_cfg, "head")
     else:
-        # Existing model may need upgrade.
+        # If existing is *newer* than installed, then attempt to upgrade.
+        # We could walk the revisions to determine this ... or just attempt an upgrade and catch an "unknown"
+        # error.
+        #
+        # (Walking revisions)
+        # for sc in script.walk_revisions(
+        #       base=base or "base",
+        #        head=head or "heads"):
+        #    config.print_stdout(
+        #        sc.cmd_format(
+        #            verbose=verbose, include_branches=True,
+        #            include_doc=True, include_parents=True))
+
         if check_version:
             latest = migrationsutil.get_head_version()
             installed = migrationsutil.get_database_version()
             if latest != installed:
-                raise DatabaseVersionError(
-                    "Installed database ({0}) does not match latest available ({1}). (Use the `paver upgrade_db` command.)".format(
-                        installed, latest))
+                warnings.warn("Installed database ({0}) does not match latest available ({1}). (ignoring for now)".format(installed, latest), UserWarning)
         else:
             log.info("Skipping database upgrade.")
 
@@ -106,22 +124,18 @@ def visit_create_view(element, compiler, **kw):
     )
 
 
-def setup_ddl():
-    # FIXME: Implement this ...
-
-    # Setup a Pool event to get MySQL to use strict SQL mode ...
-    # (This is the default now in 5.7+, so not necessary.)
-    def _set_sql_mode(dbapi_con, connection_record):
-        # dbapi_con.cursor().execute("SET sql_mode = 'STRICT_TRANS_TABLES';")
-        pass
+def drop_supplemental_db_objects(engine:Engine):
+    engine.execute("drop view if exists daily_scores")
+    engine.execute("drop view if exists ride_daylight")
+    engine.execute("drop view if exists _build_ride_daylight")
+    engine.execute("drop view if exists lbd_athletes")
 
 
-    sa.event.listen(Pool, 'connect', _set_sql_mode)
+def create_supplemental_db_objects(engine:Engine):
 
     # Create VIEWS that may be helpful.
 
     _v_daily_scores_create = sa.DDL("""
-        drop view if exists daily_scores;
         create view daily_scores as
         select A.team_id, R.athlete_id, sum(R.distance) as distance,
         (sum(R.distance) + IF(sum(R.distance) >= 1.0, 10,0)) as points,
@@ -132,7 +146,7 @@ def setup_ddl():
         ;
     """)
 
-    sa.event.listen(Ride.__table__, 'after_create', _v_daily_scores_create)
+    engine.execute(_v_daily_scores_create)
 
     _v_buid_ride_daylight = sa.DDL("""
         create view _build_ride_daylight as
@@ -147,7 +161,7 @@ def setup_ddl():
         ;
         """)
 
-    # sa.event.listen(RideWeather.__table__, 'after_create', _v_buid_ride_daylight)
+    engine.execute(_v_buid_ride_daylight)
 
     _v_ride_daylight = sa.DDL("""
         create view ride_daylight as
@@ -158,23 +172,12 @@ def setup_ddl():
         ;
         """)
 
+    engine.execute(_v_ride_daylight)
+
     _v_leaderboard_athletes = sa.DDL("""
         create view lbd_athletes as select a.id, a.name, a.display_name, a.team_id from athletes a
         join teams T on T.id=a.team_id where not T.leaderboard_exclude
         ;
         """)
 
-    # sa.event.listen(RideWeather.__table__, 'after_create', _v_ride_daylight)
-
-def rebuild_views():
-    # This import is kinda kludgy (and would be circular outside of this function) but our model engine is tied up with
-    # the Flask framework (for now)
-    from bafs import db
-    sess = db.session  # @UndefinedVariable
-    sess.execute(_v_daily_scores_create)
-    sess.execute(sa.DDL("drop view if exists _build_ride_daylight;"))
-    sess.execute(_v_buid_ride_daylight)
-    sess.execute(sa.DDL("drop view if exists ride_daylight;"))
-    sess.execute(_v_ride_daylight)
-    sess.execute(sa.DDL("drop view if exists lbd_athletes;"))
-    sess.execute(_v_leaderboard_athletes)
+    engine.execute(_v_leaderboard_athletes)
