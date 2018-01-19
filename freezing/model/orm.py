@@ -1,15 +1,19 @@
+import sys
 import re
 import warnings
+import inspect
 
 from sqlalchemy import orm, Column, BigInteger, Integer, String, Boolean, ForeignKey, DateTime, Float, Text, Time
 
 from geoalchemy import LineString, Point, GeometryColumn, GeometryDDL
 
-from . import Base, JSONEncodedText
+from . import Base, JSONEncodedText, register_managed_tables
+
 
 class _SqlView:
     """ Empty class used to indicate that this is a SQL View and not to be created. """
     pass
+
 
 class StravaEntity(Base):
     __abstract__ = True
@@ -201,8 +205,8 @@ class RideWeather(Base):
 GeometryDDL(RideGeo.__table__)
 GeometryDDL(RideTrack.__table__)
 
-# FIXME: Improve this.
-for table in [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
-if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
-and not issubclass(obj, _SqlView)]:
-    register_managed_table(table)
+_MANAGED_TABLES = [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
+                  if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
+                  and not issubclass(obj, _SqlView)]
+
+register_managed_tables(_MANAGED_TABLES)

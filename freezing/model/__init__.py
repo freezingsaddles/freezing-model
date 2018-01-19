@@ -2,14 +2,17 @@ import re
 import warnings
 import json
 import inspect
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from alembic import command
 
 import sqlalchemy as sa
+from alembic.script import ScriptDirectory
+from alembic.util import CommandError
+
 from freezing.model.exc import DatabaseVersionError
 
-from sqlalchemy import orm, create_engine
+from sqlalchemy import orm, create_engine, Table
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
@@ -23,25 +26,24 @@ from .autolog import log
 
 Base = declarative_base(metadata=meta.metadata)
 
-
+# Global list of managed tables is populated from .orm module
 MANAGED_TABLES = []
 
 
-def register_managed_table(table:Table):
+def register_managed_tables(tables:List[Table]):
     """
     Register an ORM Table object as something that should be managed (created/dropped).
 
     This is invoked by the orm module at import time.
     """
-    MANAGED_TABLES.append(table)
+    MANAGED_TABLES.extend(tables)
 
 
-def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, check_version:bool=True):
+def init_model(*, sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
     """
     Initializes the tables and classes of the model using configured engine.
 
     :param sqlalchemy_url: The database URI.
-    :param alembic_repository: The path to the alembic repository (migrations).
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
@@ -51,13 +53,15 @@ def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, c
     meta.engine = engine
     meta.Session = orm.scoped_session(sm)
 
-    alembic_cfg = migrationsutil.create_config(sqlalchemy_url=None)
+    alembic_cfg = migrationsutil.create_config(sqlalchemy_url=sqlalchemy_url)
+
+    alembic_script = ScriptDirectory.from_config(alembic_cfg)
 
     # Check to see whether the database has already been created or not.
     # Based on this, we know whether we need to upgrade the database or mark the database
     # as the latest version.
 
-    inspector = inspect(engine)
+    inspector = Inspector.from_engine(engine)
 
     db_objects_created = len(inspector.get_table_names()) > 1
 
@@ -65,35 +69,30 @@ def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, c
 
     if not db_objects_created:
         log.info("Database apears uninitialized, creating database tables")
-        meta.metadata.create_all(engine, checkfirst=True)
+        meta.metadata.create_all(engine, tables=MANAGED_TABLES, checkfirst=True)
+        create_supplemental_db_objects(engine)
         fresh_db = True
     elif drop:
         log.info("Dropping database tables and re-creating.")
-        meta.metadata.drop_all(engine, checkfirst=True)
-        meta.metadata.create_all(engine)
+        drop_supplemental_db_objects(engine)
+        meta.metadata.drop_all(engine, tables=MANAGED_TABLES, checkfirst=True)
+        meta.metadata.create_all(engine, tables=MANAGED_TABLES)
         fresh_db = True
 
     if fresh_db:
         command.stamp(alembic_cfg, "head")
     else:
-        # If existing is *newer* than installed, then attempt to upgrade.
-        # We could walk the revisions to determine this ... or just attempt an upgrade and catch an "unknown"
-        # error.
-        #
-        # (Walking revisions)
-        # for sc in script.walk_revisions(
-        #       base=base or "base",
-        #        head=head or "heads"):
-        #    config.print_stdout(
-        #        sc.cmd_format(
-        #            verbose=verbose, include_branches=True,
-        #            include_doc=True, include_parents=True))
-
         if check_version:
-            latest = migrationsutil.get_head_version()
+            latest = alembic_script.get_current_head()
             installed = migrationsutil.get_database_version()
-            if latest != installed:
-                warnings.warn("Installed database ({0}) does not match latest available ({1}). (ignoring for now)".format(installed, latest), UserWarning)
+            try:
+                alembic_script.get_revisions(installed)
+            except CommandError:
+                warnings.warn("Unknown db revision {} installed, ignoring db upgrade.".format(installed))
+            else:
+                if latest != installed:
+                    log.info("Installed database ({0}) does not match latest available ({1}). (UPGRADING)".format(installed, latest), UserWarning)
+                    command.upgrade(alembic_cfg, "head")
         else:
             log.info("Skipping database upgrade.")
 
