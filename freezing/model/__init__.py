@@ -1,15 +1,17 @@
 import re
 import warnings
 import json
+import inspect
 from typing import Dict, Any
 
 from alembic import command
 
 import sqlalchemy as sa
 from freezing.model.exc import DatabaseVersionError
-from sqlalchemy import orm, inspect, create_engine
 
+from sqlalchemy import orm, create_engine
 from sqlalchemy.engine import Engine
+from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.pool import Pool
@@ -21,9 +23,17 @@ from .autolog import log
 
 Base = declarative_base(metadata=meta.metadata)
 
-class _SqlView:
-    """ Empty class used to indicate that this is a SQL View and not to be created. """
-    pass
+
+MANAGED_TABLES = []
+
+
+def register_managed_table(table:Table):
+    """
+    Register an ORM Table object as something that should be managed (created/dropped).
+
+    This is invoked by the orm module at import time.
+    """
+    MANAGED_TABLES.append(table)
 
 
 def init_model(*, sqlalchemy_url:str, alembic_repository:str, drop:bool=False, check_version:bool=True):
