@@ -50,7 +50,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    engine = db.engine
+    engine = meta.engine
 
     connection = engine.connect()
     context.configure(

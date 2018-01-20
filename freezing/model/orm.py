@@ -207,6 +207,7 @@ GeometryDDL(RideTrack.__table__)
 
 _MANAGED_TABLES = [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
                   if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
+                  and not getattr(obj, '__abstract__', None)
                   and not issubclass(obj, _SqlView)]
 
 register_managed_tables(_MANAGED_TABLES)

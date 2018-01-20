@@ -39,7 +39,7 @@ def register_managed_tables(tables:List[Table]):
     MANAGED_TABLES.extend(tables)
 
 
-def init_model(*, sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
+def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
     """
     Initializes the tables and classes of the model using configured engine.
 
@@ -51,7 +51,7 @@ def init_model(*, sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
 
     sm = orm.sessionmaker(autoflush=True, autocommit=False, bind=engine)
     meta.engine = engine
-    meta.Session = orm.scoped_session(sm)
+    meta.session_factory = orm.scoped_session(sm)
 
     alembic_cfg = migrationsutil.create_config(sqlalchemy_url=sqlalchemy_url)
 
