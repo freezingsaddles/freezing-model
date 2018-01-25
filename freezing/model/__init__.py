@@ -12,7 +12,8 @@ from alembic.util import CommandError
 
 from freezing.model.exc import DatabaseVersionError
 
-from sqlalchemy import orm, create_engine, Table
+from sqlalchemy import create_engine, Table
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
@@ -49,9 +50,9 @@ def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
     """
     engine = create_engine(sqlalchemy_url)
 
-    sm = orm.sessionmaker(autoflush=True, autocommit=False, bind=engine)
+    sm = sessionmaker(autoflush=True, autocommit=False, bind=engine)
     meta.engine = engine
-    meta.session_factory = orm.scoped_session(sm)
+    meta.session_factory = scoped_session(sm)
 
     alembic_cfg = migrationsutil.create_config(sqlalchemy_url=sqlalchemy_url)
 
