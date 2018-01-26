@@ -30,7 +30,7 @@ setup(
     long_description=long_description,
     packages=['freezing.model'],
     include_package_data=True,
-    package_data={'freezing.web': ['migrations/*']},
+    package_data={'freezing.model': ['migrations/*']},
     install_requires=reqs,
     classifiers=[
         'Development Status :: 4 - Beta',
