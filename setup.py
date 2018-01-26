@@ -28,9 +28,9 @@ setup(
     license='Apache',
     description='Freezing Saddles database model.',
     long_description=long_description,
-    packages=find_packages(),
-    # include_package_data=True,
-    # package_data={'stravalib': ['tests/resources/*']},
+    packages=['freezing.model'],
+    include_package_data=True,
+    package_data={'freezing.web': ['migrations/*']},
     install_requires=reqs,
     classifiers=[
         'Development Status :: 4 - Beta',
