@@ -52,7 +52,7 @@ def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
 
     sm = sessionmaker(autoflush=True, autocommit=False, bind=engine)
     meta.engine = engine
-    meta.session_factory = scoped_session(sm)
+    meta.scoped_session = scoped_session(sm)
 
     alembic_cfg = migrationsutil.create_config(sqlalchemy_url=sqlalchemy_url)
 
