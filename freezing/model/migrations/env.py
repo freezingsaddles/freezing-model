@@ -3,7 +3,6 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
-from bafs import app, db
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -37,7 +36,7 @@ def run_migrations_offline():
 
     """
     #url = config.get_main_option("sqlalchemy.url")
-    url = app.config['SQLALCHEMY_DATABASE_URI']
+    url = Config.SQLALCHEMY_DATABASE_URI
     context.configure(url=url)
 
     with context.begin_transaction():
