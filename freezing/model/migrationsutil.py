@@ -34,5 +34,5 @@ def get_database_version() -> str:
     """
     Gets the current database revision (partial GUID).
     """
-    context = MigrationContext.configure(meta.engine)
+    context = MigrationContext.configure(meta.engine.connect())
     return context.get_current_revision()
