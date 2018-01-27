@@ -6,7 +6,7 @@ import warnings
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-version = '0.1.1'
+version = '0.1.3'
 
 long_description = """
 freezing-model is the database model definition shared by freezing saddles components.
