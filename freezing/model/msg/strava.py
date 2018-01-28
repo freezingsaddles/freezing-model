@@ -3,7 +3,8 @@ import enum
 from datetime import datetime
 from typing import Callable, Dict, Any
 
-from marshmallow import fields, Schema, post_load
+import arrow
+from marshmallow import fields, Schema, post_load, pre_load
 from marshmallow_enum import EnumField
 
 from . import BaseMessage, BaseSchema
@@ -58,15 +59,15 @@ class SubscriptionCallback(BaseMessage):
     hub_challenge: str = None
 
 
-class SubscriptionCallbackSchema(Schema):
+class SubscriptionCallbackSchema(BaseSchema):
     """
     Represents a Webhook Event Subscription Callback.
     """
     _model_class = SubscriptionCallback
 
-    hub_mode = fields.Str()
-    hub_verify_token = fields.Str()
-    hub_challenge = fields.Str()
+    hub_mode = fields.Str(load_from='hub.mode')
+    hub_verify_token = fields.Str(load_from='hub.verify_token')
+    hub_challenge = fields.Str(load_from='hub.challenge')
 
 
 class SubscriptionUpdate(BaseMessage):
@@ -76,7 +77,7 @@ class SubscriptionUpdate(BaseMessage):
     subscription_id: int = None
     owner_id: int = None
     object_id: int = None
-    object_type: str = None
+    object_type: ObjectType = None
     aspect_type: str = None
     event_time: datetime = None
     updates: Dict[str, Any] = None
@@ -87,12 +88,19 @@ class SubscriptionUpdateSchema(BaseSchema):
     Represents a Webhook Event Subscription Update.
     """
     _model_class = SubscriptionUpdate
-    
+
+
     subscription_id = fields.Int()
     owner_id = fields.Int()
     object_id = fields.Int()
-    object_type = fields.Str()
-    aspect_type = fields.Str()
+    object_type = EnumField(ObjectType)
+    aspect_type = EnumField(AspectType)
     event_time = fields.DateTime()
     updates = fields.Dict()
+
+    @pre_load
+    def parse_dt(self, in_data):
+        if in_data.get('event_time'):
+            in_data['event_time'] = arrow.get(in_data['event_time']).isoformat()
+        return in_data
 

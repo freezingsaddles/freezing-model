@@ -6,10 +6,10 @@ import warnings
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-version = '0.1.3'
+version = '0.2.0'
 
 long_description = """
-freezing-model is the database model definition shared by freezing saddles components.
+freezing-model is the database model and message definitions shared by freezing saddles components.
 """
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
@@ -24,11 +24,11 @@ setup(
     version=version,
     author='Hans Lellelid',
     author_email='hans@xmpl.org',
-    url='http://github.com/hozn/freezing-model',
+    url='http://github.com/freezingsaddles/freezing-model',
     license='Apache',
-    description='Freezing Saddles database model.',
+    description='Freezing Saddles database and messaging models.',
     long_description=long_description,
-    packages=['freezing.model'],
+    packages=['freezing.model', 'freezing.model.msg'],
     include_package_data=True,
     package_data={'freezing.model': ['migrations/*']},
     install_requires=reqs,

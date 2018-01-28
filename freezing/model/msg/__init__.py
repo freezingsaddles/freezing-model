@@ -16,7 +16,12 @@ class BaseMessage:
             setattr(self, k, v)
 
 
-class BaseSchema(metaclass=abc.ABCMeta):
+class BaseSchema(Schema):
+
+    def __init__(self, *args, **kwargs):
+        if 'strict' not in kwargs:
+            kwargs['strict'] = True
+        super().__init__(*args, **kwargs)
 
     @property
     @abc.abstractmethod
@@ -25,5 +30,6 @@ class BaseSchema(metaclass=abc.ABCMeta):
 
     @post_load
     def make_model(self, data):
+        print("IN POST_LOAD for {}".format(data))
         return self._model_class(**data)
 
