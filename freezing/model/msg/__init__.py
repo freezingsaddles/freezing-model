@@ -30,6 +30,5 @@ class BaseSchema(Schema):
 
     @post_load
     def make_model(self, data):
-        print("IN POST_LOAD for {}".format(data))
         return self._model_class(**data)
 
