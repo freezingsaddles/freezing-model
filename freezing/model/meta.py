@@ -1,5 +1,6 @@
 """SQLAlchemy Metadata and Session object"""
-from typing import Callable
+import contextlib
+from typing import Callable, ContextManager
 from sqlalchemy import MetaData
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
@@ -13,3 +14,20 @@ scoped_session: Callable[..., Session] = None
 # Global metadata. If you have multiple databases with overlapping table
 # names, you'll need a metadata for each database
 metadata = MetaData()
+
+
+@contextlib.contextmanager
+def transaction_context(read_only: bool = False) -> ContextManager[Session]:
+    session = scoped_session()
+    try:
+        yield session
+    except:
+        session.rollback()
+        raise
+    else:
+        if read_only:
+            session.rollback()
+        else:
+            session.commit()
+    finally:
+        session.close()
