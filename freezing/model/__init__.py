@@ -48,7 +48,7 @@ def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
-    engine = create_engine(sqlalchemy_url)
+    engine = create_engine(sqlalchemy_url, pool_recycle=3600)  # pool_recycle is for mysql
 
     sm = sessionmaker(autoflush=True, autocommit=False, bind=engine)
     meta.engine = engine
