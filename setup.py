@@ -10,8 +10,6 @@ try: # for pip >= 10
 except ImportError: # for pip <= 9.0.3
     from pip.req import parse_requirements
 
-
-from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 version = '0.2.3'
