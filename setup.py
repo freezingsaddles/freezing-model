@@ -3,6 +3,14 @@ import os.path
 import re
 import warnings
 
+# Ugh, pip 10 is backward incompatible, but there is a workaround:
+# Thanks Stack Overflow https://stackoverflow.com/a/49867265
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
+
+
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
