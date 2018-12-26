@@ -1,8 +1,9 @@
 from __future__ import with_statement
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from freezing.model import meta
 from logging.config import fileConfig
-
+from os import environ
+from sqlalchemy import create_engine, engine_from_config, pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -23,6 +24,7 @@ target_metadata = None
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -35,12 +37,15 @@ def run_migrations_offline():
     script output.
 
     """
-    #url = config.get_main_option("sqlalchemy.url")
-    url = Config.SQLALCHEMY_DATABASE_URI
-    context.configure(url=url)
+    url = config.get_main_option("sqlalchemy.url")
+    if not url:
+        url = environ['SQLALCHEMY_URL']
+    context.configure(
+        url=url, target_metadata=target_metadata, literal_binds=True)
 
     with context.begin_transaction():
         context.run_migrations()
+
 
 def run_migrations_online():
     """Run migrations in 'online' mode.
@@ -49,22 +54,33 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    engine = meta.engine
 
-    connection = engine.connect()
-    context.configure(
-                connection=connection,
-                target_metadata=target_metadata
-                )
+    if (meta.engine):
+        # This is the path taken when migrating from freezing-web
+        print("run_migrations_online: use meta.engine to get connection")
+        connectable = meta.engine
+    if (environ['SQLALCHEMY_URL']):
+        print("run_migrations_online: use SQLALCHEMY_URL var for connection")
+        connectable = create_engine(environ['SQLALCHEMY_URL'],
+                                    poolclass=pool.NullPool)
+    else:
+        print("run_migrations_online: use engine_from_config for connection")
+        connectable = engine_from_config(
+            config.get_section(config.config_ini_section),
+            prefix='sqlalchemy.',
+            poolclass=pool.NullPool)
 
-    try:
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata
+        )
+
         with context.begin_transaction():
             context.run_migrations()
-    finally:
-        connection.close()
+
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

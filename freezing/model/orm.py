@@ -51,6 +51,8 @@ class Athlete(StravaEntity):
     team_id = Column(BigInteger, ForeignKey('teams.id', ondelete='set null'))
     access_token = Column(String(255), nullable=True)
     profile_photo = Column(String(255), nullable=True)
+    refresh_token = Column(String(255), nullable=True)
+    expires_at = Column(BigInteger, default=0)
 
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
 
