@@ -22,5 +22,5 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_column('athletes', sa.Column('refresh_token'))
-    op.drop_column('athletes', sa.Column('expires_at'))
+    op.drop_column('athletes', 'refresh_token')
+    op.drop_column('athletes', 'expires_at')
