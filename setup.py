@@ -12,7 +12,7 @@ except ImportError: # for pip <= 9.0.3
 
 from setuptools import setup, find_packages
 
-version = '0.2.3'
+version = '0.2.7'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
