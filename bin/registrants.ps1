@@ -18,7 +18,7 @@ param (
   [Parameter(Mandatory=$true)][string]$csvfile
 )
 Write-Output "drop table if exists registrants;"
-Write-Output "create table registrants (regnum int(11), id int(11), username varchar(255), name varchar(255), registered_on datetime);"
+Write-Output "create table registrants (regnum int(11), id int(11), username varchar(255), name varchar(255), email varchar(255), registered_on datetime);"
 Write-Output "begin;"
 $users = import-csv $csvfile
 ForEach ($item in $users) {
