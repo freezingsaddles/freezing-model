@@ -1,21 +1,14 @@
 """
 Various utility functions.
 """
-from __future__ import absolute_import
-import os.path
-import string
-
 import alembic
-
-from alembic.runtime.migration import MigrationContext
-from alembic.context import EnvironmentContext
 from alembic.config import Config
-from alembic.script import ScriptDirectory
+from alembic.runtime.migration import MigrationContext
 
-from . import meta
+from freezing.model import meta
 
 
-def create_config(sqlalchemy_url:str) -> Config:
+def create_config(sqlalchemy_url: str) -> Config:
     """
     Create the Alembic Config object based on the application configuration.
 

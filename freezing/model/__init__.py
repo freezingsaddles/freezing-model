@@ -1,46 +1,39 @@
-import re
 import warnings
-import json
-import inspect
-from typing import Dict, Any, List
-
-from alembic import command
 
 import sqlalchemy as sa
+from alembic import command
 from alembic.script import ScriptDirectory
 from alembic.util import CommandError
-
-from freezing.model.exc import DatabaseVersionError
-
-from sqlalchemy import create_engine, Table
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.pool import Pool
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql.expression import Executable, ClauseElement
-from sqlalchemy.types import TypeDecorator, TEXT
 
-from . import meta, migrationsutil
-from .autolog import log
-
-Base = declarative_base(metadata=meta.metadata)
-
-# Global list of managed tables is populated from .orm module
-MANAGED_TABLES = []
+from freezing.model.exc import DatabaseVersionError
+from freezing.model import meta, migrationsutil
+from freezing.model.autolog import log
+from freezing.model.orm import Team, Athlete, RideError, Ride, RideGeo, RideTrack, RideEffort, RidePhoto, RideWeather
 
 
-def register_managed_tables(tables:List[Table]):
-    """
-    Register an ORM Table object as something that should be managed (created/dropped).
+# Make the list of managed tables explicit here.  These tables will be automatically created by sqlalchemy
+# in init_model if they do not exist *and* the database appears to be empty.
+MANAGED_TABLES = [
+    Team.__table__,
+    Athlete.__table__,
+    RideError.__table__,
+    Ride.__table__,
+    RideGeo.__table__,
+    RideTrack.__table__,
+    RideEffort.__table__,
+    RidePhoto.__table__,
+    RideWeather.__table__
+]
 
-    This is invoked by the orm module at import time.
-    """
-    MANAGED_TABLES.extend(tables)
 
-
-def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
+def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = True):
     """
     Initializes the tables and classes of the model using configured engine.
 
@@ -98,28 +91,6 @@ def init_model(sqlalchemy_url:str, drop:bool=False, check_version:bool=True):
             log.info("Skipping database upgrade.")
 
 
-class JSONEncodedText(TypeDecorator):
-    """Represents an immutable structure as a json-encoded string.
-
-    Usage::
-
-        JSONEncodedText
-    """
-
-    impl = TEXT
-
-    def process_bind_param(self, value, dialect):
-        if value is not None:
-            value = json.dumps(value)
-
-        return value
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            value = json.loads(value)
-        return value
-
-
 class CreateView(Executable, ClauseElement):
     def __init__(self, name, select):
         self.name = name
@@ -134,15 +105,14 @@ def visit_create_view(element, compiler, **kw):
     )
 
 
-def drop_supplemental_db_objects(engine:Engine):
+def drop_supplemental_db_objects(engine: Engine):
     engine.execute("drop view if exists daily_scores")
     engine.execute("drop view if exists ride_daylight")
     engine.execute("drop view if exists _build_ride_daylight")
     engine.execute("drop view if exists lbd_athletes")
 
 
-def create_supplemental_db_objects(engine:Engine):
-
+def create_supplemental_db_objects(engine: Engine):
     # Create VIEWS that may be helpful.
 
     _v_daily_scores_create = sa.DDL("""

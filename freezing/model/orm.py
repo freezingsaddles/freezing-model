@@ -1,13 +1,13 @@
-import sys
 import re
 import warnings
-import inspect
-
-from sqlalchemy import orm, Column, BigInteger, Integer, String, Boolean, ForeignKey, DateTime, Float, Text, Time
 
 from geoalchemy import LineString, Point, GeometryColumn, GeometryDDL
+from sqlalchemy import orm, Column, BigInteger, Integer, String, Boolean, ForeignKey, DateTime, Float, Text, Time
+from sqlalchemy.ext.declarative import declarative_base
 
-from . import Base, JSONEncodedText, register_managed_tables
+from . import meta, satypes
+
+Base = declarative_base(metadata=meta.metadata)
 
 
 class _SqlView:
@@ -125,11 +125,12 @@ class RideTrack(Base):
 
     ride_id = Column(BigInteger, ForeignKey('rides.id'), primary_key=True)
     gps_track = GeometryColumn(LineString(2), nullable=False)
-    elevation_stream = Column(JSONEncodedText, nullable=True)
-    time_stream = Column(JSONEncodedText, nullable=True)
+    elevation_stream = Column(satypes.JSONEncodedText, nullable=True)
+    time_stream = Column(satypes.JSONEncodedText, nullable=True)
 
     def __repr__(self):
-        return '<{0} ride_id={1}>'.format(self.__class__.__name__,  self.ride_id)
+        return '<{0} ride_id={1}>'.format(self.__class__.__name__, self.ride_id)
+
 
 class RideEffort(Base):
     __tablename__ = 'ride_efforts'
@@ -166,7 +167,7 @@ class RidePhoto(Base):
                 except AttributeError:
                     warnings.warn("Unable to get width and height from source=1 image url: {}".format(self.img_l))
             else:
-                (width, height) = (612,612)
+                (width, height) = (612, 612)
         return (width, height)
 
     primary = Column(Boolean, nullable=False, default=False)
@@ -207,9 +208,11 @@ class RideWeather(Base):
 GeometryDDL(RideGeo.__table__)
 GeometryDDL(RideTrack.__table__)
 
-_MANAGED_TABLES = [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
-                  if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
-                  and not getattr(obj, '__abstract__', None)
-                  and not issubclass(obj, _SqlView)]
-
-register_managed_tables(_MANAGED_TABLES)
+# Opting for a more explicit approach to specifyign which tables are to be managed by SA.
+#
+# _MANAGED_TABLES = [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
+#                   if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
+#                   and hasattr(obj, '__table__')
+#                   and not issubclass(obj, _SqlView)]
+#
+# register_managed_tables(_MANAGED_TABLES)
