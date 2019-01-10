@@ -168,7 +168,7 @@ def create_supplemental_db_objects(engine: Engine):
                 `daily_scores`.`athlete_id` AS `athlete_id`,
                 `teams`.`id` as `team_id`,
                 `teams`.`name` as `team_name`,
-                week(`daily_scores`.`ride_date`,0) AS `week_num`,
+                week(`daily_scores`.`ride_date`,3) AS `week_num`,
                 (
                     select sum(
                         case
@@ -193,7 +193,7 @@ def create_supplemental_db_objects(engine: Engine):
             group by
                 `daily_scores`.`team_id`,
                 `daily_scores`.`athlete_id`,
-                week(`daily_scores`.`ride_date`,0)
+                week(`daily_scores`.`ride_date`,3)
         ;
         """)
 
