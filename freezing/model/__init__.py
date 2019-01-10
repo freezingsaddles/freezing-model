@@ -161,3 +161,40 @@ def create_supplemental_db_objects(engine: Engine):
         """)
 
     engine.execute(_v_leaderboard_athletes)
+
+    _v_100_mile_team_score = sa.DDL("""
+        create or replace VIEW `weekly_stats` AS
+            select
+                `daily_scores`.`athlete_id` AS `athlete_id`,
+                `teams`.`id` as `team_id`,
+                `teams`.`name` as `team_name`,
+                week(`daily_scores`.`ride_date`,0) AS `week_num`,
+                (
+                    select sum(
+                        case
+                            when `daily_scores`.`distance` >= 1
+                            then 1
+                            else 0
+                        end
+                    )
+                ) as `days`,
+                sum(`daily_scores`.`distance`) AS `distance`,
+                sum(`daily_scores`.`points`) AS `points`,
+                (select case
+                    when sum(`daily_scores`.`distance`) < 100
+                    then sum(`daily_scores`.`distance`)
+                    else (100)
+                    end
+                ) as team_distance
+            from
+                `daily_scores` join `teams`
+                    on `teams`.`id` = `daily_scores`.`team_id`
+            where not `teams`.`leaderboard_exclude`
+            group by
+                `daily_scores`.`team_id`,
+                `daily_scores`.`athlete_id`,
+                week(`daily_scores`.`ride_date`,0)
+        ;
+        """)
+
+    engine.execute(_v_100_mile_team_score)
