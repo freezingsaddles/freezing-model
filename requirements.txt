@@ -1,6 +1,8 @@
-SQLAlchemy>=1.2.1,<1.3.0
 -e git+https://github.com/hozn/GeoAlchemy@0.7.3dev1#egg=GeoAlchemy
+PyMySQL==0.8.0
+SQLAlchemy>=1.2.1,<1.3.0
 alembic==0.9.7
+arrow==0.12.1
 marshmallow==2.15.1
 marshmallow-enum==1.4.1
-PyMySQL==0.8.0
+pytz==2018.7

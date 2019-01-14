@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from alembic import context
-from freezing.model import meta
+from freezing.model import config, meta
 from logging.config import fileConfig
 from os import environ
 from sqlalchemy import create_engine, engine_from_config, pool
@@ -40,7 +40,7 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     if not url:
-        url = environ['SQLALCHEMY_URL']
+        url = freezing.model.config.SQLALCHEMY_URL
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True)
 
