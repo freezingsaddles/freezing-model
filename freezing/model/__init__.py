@@ -14,6 +14,7 @@ from sqlalchemy.sql.expression import Executable, ClauseElement
 
 from freezing.model.exc import DatabaseVersionError
 from freezing.model import meta, migrationsutil
+from freezing.model.config import config as model_config
 from freezing.model.autolog import log
 from freezing.model.orm import Team, Athlete, RideError, Ride, RideGeo, RideTrack, RideEffort, RidePhoto, RideWeather
 
@@ -119,12 +120,15 @@ def create_supplemental_db_objects(engine: Engine):
         create view daily_scores as
         select A.team_id, R.athlete_id, sum(R.distance) as distance,
         (sum(R.distance) + IF(sum(R.distance) >= 1.0, 10,0)) as points,
-        date(R.start_date) as ride_date
+        date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
         from rides R
         join athletes A on A.id = R.athlete_id
-        group by R.athlete_id, A.team_id, date(R.start_date)
+        group by
+          R.athlete_id,
+          A.team_id,
+          date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
         ;
-    """)
+    """.format(model_config.TIMEZONE))
 
     engine.execute(_v_daily_scores_create)
 
@@ -155,7 +159,7 @@ def create_supplemental_db_objects(engine: Engine):
     engine.execute(_v_ride_daylight)
 
     _v_leaderboard_athletes = sa.DDL("""
-        create view lbd_athletes as select a.id, a.name, a.display_name, a.team_id from athletes a
+       create view lbd_athletes as select a.id, a.name, a.display_name, a.team_id from athletes a
         join teams T on T.id=a.team_id where not T.leaderboard_exclude
         ;
         """)
