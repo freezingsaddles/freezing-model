@@ -13,7 +13,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql.expression import Executable, ClauseElement
 
 from freezing.model.exc import DatabaseVersionError
-from freezing.model import config, meta, migrationsutil
+from freezing.model import meta, migrationsutil
+from freezing.model.config import config as model_config
 from freezing.model.autolog import log
 from freezing.model.orm import Team, Athlete, RideError, Ride, RideGeo, RideTrack, RideEffort, RidePhoto, RideWeather
 
@@ -127,7 +128,7 @@ def create_supplemental_db_objects(engine: Engine):
           A.team_id,
           date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
         ;
-    """.format(config.TIMEZONE))
+    """.format(model_config.TIMEZONE))
 
     engine.execute(_v_daily_scores_create)
 

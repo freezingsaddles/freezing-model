@@ -1,6 +1,6 @@
 from alembic import op
 import sqlalchemy as sa
-from freezing.model import config
+from freezing.model.config import config
 
 """Make daily_scores pay attention to timezones
 
