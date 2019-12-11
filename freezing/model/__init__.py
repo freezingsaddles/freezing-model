@@ -5,6 +5,7 @@ from alembic import command
 from alembic.script import ScriptDirectory
 from alembic.util import CommandError
 from sqlalchemy import create_engine
+from sqalchemy import case
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
@@ -119,7 +120,15 @@ def create_supplemental_db_objects(engine: Engine):
     _v_daily_scores_create = sa.DDL("""
         create view daily_scores as
         select A.team_id, R.athlete_id, sum(R.distance) as distance,
-        (sum(R.distance) + IF(sum(R.distance) >= 1.0, 10,0)) as points,
+        where(
+            case(
+                [
+                    (sum(R.distance) >= 1 & sum(R.distance <= 10), 10 + 0.5 * (21 * sum(R.distance) - sum(R.distance) * sum(R.distance))),
+                    (sum(R.distance) > 10, 65 + sum(R.distance))
+                ]
+            )
+            else_=0
+        ) as points,
         date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
         from rides R
         join athletes A on A.id = R.athlete_id
