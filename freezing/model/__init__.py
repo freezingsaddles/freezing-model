@@ -123,11 +123,11 @@ def create_supplemental_db_objects(engine: Engine):
         where(
             case(
                 [
-                    (sum(R.distance) >= 1 & sum(R.distance <= 10), 10 + 0.5 * (21 * sum(R.distance) - sum(R.distance) * sum(R.distance))),
+                    (and_(sum(R.distance) >= 1, sum(R.distance) <= 10),
+                    10 + 0.5 * (21 * sum(R.distance) - (sum(R.distance) * sum(R.distance)))),
                     (sum(R.distance) > 10, 65 + sum(R.distance))
                 ]
             )
-            else_=0
         ) as points,
         date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
         from rides R
