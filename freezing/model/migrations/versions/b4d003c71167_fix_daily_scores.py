@@ -16,7 +16,7 @@ down_revision = '9b7cf7603b70'
 
 def upgrade():
     op.execute("""
-      create view daily_scores as
+      create or replace view daily_scores as
       select
         A.team_id,
         R.athlete_id,
