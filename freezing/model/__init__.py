@@ -118,19 +118,24 @@ def create_supplemental_db_objects(engine: Engine):
 
     _v_daily_scores_create = sa.DDL("""
         create view daily_scores as
-        select A.team_id, R.athlete_id, sum(R.distance) as distance,
-        case
-            when distance < 0 then 0
-            when distance < 10 then 10 + 0.5 * (21 * distance - (distance * distance))
-            else 65 + distance
-        end as points,
-        date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
-        from rides R
-        join athletes A on A.id = R.athlete_id
-        group by
-          R.athlete_id,
+        select
           A.team_id,
-          date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
+          R.athlete_id,
+          sum(R.distance) as distance,
+          case
+            when sum(R.distance) < 1 then 0
+            when sum(R.distance) < 10 then
+              10 + 0.5 * (21 * sum(R.distance) -
+              (sum(R.distance) * sum(R.distance)))
+            else 65 + sum(R.distance)
+          end as points,
+          date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
+        from
+          rides R join athletes A on A.id = R.athlete_id
+        group by
+          A.id,
+          A.team_id,
+          ride_date
         ;
     """.format(model_config.TIMEZONE))
 
