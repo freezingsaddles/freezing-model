@@ -23,10 +23,10 @@ class BaseSchema(Schema):
 
     @property
     @abc.abstractmethod
-    def _model_class(self) -> Callable[..., BaseMessage]:
+    def _model_class(self, **kwargs) -> Callable[..., BaseMessage]:
         pass
 
     @post_load
-    def make_model(self, data):
+    def make_model(self, data, **kwargs):
         return self._model_class(**data)
 
