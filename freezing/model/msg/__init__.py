@@ -19,8 +19,6 @@ class BaseMessage:
 class BaseSchema(Schema):
 
     def __init__(self, *args, **kwargs):
-        if 'strict' not in kwargs:
-            kwargs['strict'] = True
         super().__init__(*args, **kwargs)
 
     @property
