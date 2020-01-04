@@ -127,7 +127,7 @@ def create_supplemental_db_objects(engine: Engine):
             when sum(R.distance) < 10 then
               10 + 0.5 * (21 * sum(R.distance) -
               (sum(R.distance) * sum(R.distance)))
-            else 65 + sum(R.distance)
+            else 65 + sum(R.distance) - 10
           end as points,
           date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) as ride_date
         from
