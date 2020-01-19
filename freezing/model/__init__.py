@@ -63,7 +63,7 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     fresh_db = False
 
     if not db_objects_created:
-        log.info("Database apears uninitialized, creating database tables")
+        log.info("Database appears uninitialized, creating database tables")
         meta.metadata.create_all(engine, tables=MANAGED_TABLES, checkfirst=True)
         create_supplemental_db_objects(engine)
         fresh_db = True
