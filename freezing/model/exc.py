@@ -1,3 +1,2 @@
-
 class DatabaseVersionError(RuntimeError):
     pass

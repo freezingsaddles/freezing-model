@@ -8,7 +8,6 @@ from marshmallow_enum import EnumField
 
 
 class BaseMessage:
-
     def __init__(self, **kwargs):
         for (k, v) in kwargs.items():
             if not hasattr(self.__class__, k):
@@ -17,7 +16,6 @@ class BaseMessage:
 
 
 class BaseSchema(Schema):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -29,4 +27,3 @@ class BaseSchema(Schema):
     @post_load
     def make_model(self, data, **kwargs):
         return self._model_class(**data)
-

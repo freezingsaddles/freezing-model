@@ -10,27 +10,31 @@ import arrow
 import pytz
 
 
-envfile = os.environ.get('APP_SETTINGS', os.path.join(os.getcwd(), '.env'))
+envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
 if os.path.exists(envfile):
     env.read_envfile(envfile)
 
-_basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+_basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 
 class Config:
 
-    DEBUG: bool = env('DEBUG', cast=bool, default=False)
+    DEBUG: bool = env("DEBUG", cast=bool, default=False)
 
-    SQLALCHEMY_URL = env('SQLALCHEMY_URL')
+    SQLALCHEMY_URL = env("SQLALCHEMY_URL")
 
-    TIMEZONE: tzinfo = env('TIMEZONE', default='America/New_York', postprocessor=lambda val: pytz.timezone(val))
-
+    TIMEZONE: tzinfo = env(
+        "TIMEZONE",
+        default="America/New_York",
+        postprocessor=lambda val: pytz.timezone(val),
+    )
 
 
 config = Config()
 
 
-def init_logging(loglevel:int = logging.INFO, color: bool = False):
+def init_logging(loglevel: int = logging.INFO, color: bool = False):
     """
     Initialize the logging subsystem and create a logger for this class, using passed in optparse options.
 
@@ -47,20 +51,24 @@ def init_logging(loglevel:int = logging.INFO, color: bool = False):
             datefmt=None,
             reset=True,
             log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red',
-            }
+                "DEBUG": "cyan",
+                "INFO": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red",
+            },
         )
     else:
         formatter = logging.Formatter("%(levelname)-8s [%(name)s] %(message)s")
 
     ch.setFormatter(formatter)
 
-    loggers = [logging.getLogger('freezing'), logging.getLogger('stravalib'),
-               logging.getLogger('requests'), logging.root]
+    loggers = [
+        logging.getLogger("freezing"),
+        logging.getLogger("stravalib"),
+        logging.getLogger("requests"),
+        logging.root,
+    ]
 
     for l in loggers:
         if l is logging.root:

@@ -9,13 +9,14 @@ from marshmallow_enum import EnumField
 
 
 class DefinedTubes(enum.Enum):
-    activity_update = 'activity-update'
+    activity_update = "activity-update"
 
 
 class ActivityUpdate(BaseMessage):
     """
     Represents a Webhook Event Subscription Update.
     """
+
     operation: AspectType = None
     athlete_id: int = None
     activity_id: int = None
@@ -23,14 +24,18 @@ class ActivityUpdate(BaseMessage):
     updates: Dict[str, Any] = None
 
     def __repr__(self):
-        return '[Activity {} id={} athlete={}]'.format(self.operation.value if self.operation else '?',
-                                                       self.activity_id, self.athlete_id)
+        return "[Activity {} id={} athlete={}]".format(
+            self.operation.value if self.operation else "?",
+            self.activity_id,
+            self.athlete_id,
+        )
 
 
 class ActivityUpdateSchema(BaseSchema):
     """
     Represents a Webhook Event Subscription Update.
     """
+
     _model_class = ActivityUpdate
 
     operation = EnumField(AspectType)
