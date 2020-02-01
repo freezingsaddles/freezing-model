@@ -99,6 +99,7 @@ class Ride(StravaEntity):
     track_fetched = Column(Boolean, default=None, nullable=True)
     detail_fetched = Column(Boolean, default=False, nullable=False)
     resync_count = Column(Integer, default=0, nullable=False)
+    resync_date = Column(DateTime, nullable=True)
 
     private = Column(Boolean, default=False, nullable=False)
     manual = Column(Boolean, default=None, nullable=True)
