@@ -23,6 +23,8 @@ variable, for example:
     PYTHONPATH=$(pwd) alembic current
     PYTHONPATH=$(pwd) alembic upgrade head
 
+### Coding standards
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
 
 Useful Queries
 --------------
@@ -40,6 +42,3 @@ select r.regnum, a.id, r.username, r.name, r.email, r.registered_on from registr
 
 select email from registrants where id not in (select id from athletes) union select r.email from registrants r inner join athletes a on (r.id = a.id) where a.team_id is null; /* Emails of users from both of the above groups who need to authorize in Strava */
 ```
-
-
-

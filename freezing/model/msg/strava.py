@@ -11,13 +11,13 @@ from . import BaseMessage, BaseSchema
 
 
 class ObjectType(enum.Enum):
-    activity = 'activity'
+    activity = "activity"
 
 
 class AspectType(enum.Enum):
-    create = 'create'
-    update = 'update'
-    delete = 'delete'
+    create = "create"
+    update = "update"
+    delete = "delete"
 
 
 class Subscription(BaseMessage):
@@ -26,6 +26,7 @@ class Subscription(BaseMessage):
 
     http://strava.github.io/api/partner/v3/events/
     """
+
     application_id: int = None
     object_type: ObjectType = None
     aspect_type: AspectType = None
@@ -40,6 +41,7 @@ class SubscriptionSchema(BaseSchema):
 
     http://strava.github.io/api/partner/v3/events/
     """
+
     _model_class = Subscription
 
     application_id = fields.Int()
@@ -54,6 +56,7 @@ class SubscriptionCallback(BaseMessage):
     """
     Represents a Webhook Event Subscription Callback.
     """
+
     hub_mode: str = None
     hub_verify_token: str = None
     hub_challenge: str = None
@@ -63,17 +66,19 @@ class SubscriptionCallbackSchema(BaseSchema):
     """
     Represents a Webhook Event Subscription Callback.
     """
+
     _model_class = SubscriptionCallback
 
-    hub_mode = fields.Str(load_from='hub.mode')
-    hub_verify_token = fields.Str(load_from='hub.verify_token')
-    hub_challenge = fields.Str(load_from='hub.challenge')
+    hub_mode = fields.Str(load_from="hub.mode")
+    hub_verify_token = fields.Str(load_from="hub.verify_token")
+    hub_challenge = fields.Str(load_from="hub.challenge")
 
 
 class SubscriptionUpdate(BaseMessage):
     """
     Represents a Webhook Event Subscription Update.
     """
+
     subscription_id: int = None
     owner_id: int = None
     object_id: int = None
@@ -87,8 +92,8 @@ class SubscriptionUpdateSchema(BaseSchema):
     """
     Represents a Webhook Event Subscription Update.
     """
-    _model_class = SubscriptionUpdate
 
+    _model_class = SubscriptionUpdate
 
     subscription_id = fields.Int()
     owner_id = fields.Int()
@@ -100,7 +105,6 @@ class SubscriptionUpdateSchema(BaseSchema):
 
     @pre_load
     def parse_dt(self, in_data):
-        if in_data.get('event_time'):
-            in_data['event_time'] = arrow.get(in_data['event_time']).isoformat()
+        if in_data.get("event_time"):
+            in_data["event_time"] = arrow.get(in_data["event_time"]).isoformat()
         return in_data
-
