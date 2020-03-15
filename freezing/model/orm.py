@@ -2,7 +2,19 @@ import re
 import warnings
 
 from geoalchemy import LineString, Point, GeometryColumn, GeometryDDL
-from sqlalchemy import orm, Column, BigInteger, Integer, String, Boolean, ForeignKey, DateTime, Float, Text, Time
+from sqlalchemy import (
+    orm,
+    Column,
+    BigInteger,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+    DateTime,
+    Float,
+    Text,
+    Time,
+)
 from sqlalchemy.ext.declarative import declarative_base
 
 from . import meta, satypes
@@ -12,12 +24,16 @@ Base = declarative_base(metadata=meta.metadata)
 
 class _SqlView:
     """ Empty class used to indicate that this is a SQL View and not to be created. """
+
     pass
 
 
 class StravaEntity(Base):
     __abstract__ = True
-    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8mb4'}  # But we use MyISAM for the spatial table.
+    __table_args__ = {
+        "mysql_engine": "InnoDB",
+        "mysql_charset": "utf8mb4",
+    }  # But we use MyISAM for the spatial table.
 
     id = Column(BigInteger, primary_key=True, autoincrement=False)
     name = Column(String(1000), nullable=False)
@@ -29,16 +45,23 @@ class StravaEntity(Base):
             try:
                 setattr(self, k, v)
             except AttributeError:
-                raise AttributeError("Unable to set attribute {0} on {1}".format(k, self.__class__.__name__))
+                raise AttributeError(
+                    "Unable to set attribute {0} on {1}".format(
+                        k, self.__class__.__name__
+                    )
+                )
 
     def __repr__(self):
-        return '<{0} id={1} name={2!r}>'.format(self.__class__.__name__, self.id, self.name)
+        return "<{0} id={1} name={2!r}>".format(
+            self.__class__.__name__, self.id, self.name
+        )
 
 
 class Team(StravaEntity):
     """
     """
-    __tablename__ = 'teams'
+
+    __tablename__ = "teams"
     athletes = orm.relationship("Athlete", backref="team")
     leaderboard_exclude = Column(Boolean, nullable=False, default=False)
 
@@ -46,22 +69,31 @@ class Team(StravaEntity):
 class Athlete(StravaEntity):
     """
     """
-    __tablename__ = 'athletes'
+
+    __tablename__ = "athletes"
     display_name = Column(String(255), nullable=True)
-    team_id = Column(BigInteger, ForeignKey('teams.id', ondelete='set null'))
+    team_id = Column(BigInteger, ForeignKey("teams.id", ondelete="set null"))
     access_token = Column(String(255), nullable=True)
     profile_photo = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     expires_at = Column(BigInteger, default=0)
 
-    rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
+    rides = orm.relationship(
+        "Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan"
+    )
 
 
 class RideError(StravaEntity):
     """
     """
-    __tablename__ = 'ride_errors'
-    athlete_id = Column(BigInteger, ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
+
+    __tablename__ = "ride_errors"
+    athlete_id = Column(
+        BigInteger,
+        ForeignKey("athletes.id", ondelete="cascade"),
+        nullable=False,
+        index=True,
+    )
     start_date = Column(DateTime, nullable=False, index=True)  # 2010-02-28T08:31:35Z
     last_seen = Column(DateTime, nullable=False, index=True)
     reason = Column(String(1024), nullable=False)
@@ -70,8 +102,14 @@ class RideError(StravaEntity):
 class Ride(StravaEntity):
     """
     """
-    __tablename__ = 'rides'
-    athlete_id = Column(BigInteger, ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
+
+    __tablename__ = "rides"
+    athlete_id = Column(
+        BigInteger,
+        ForeignKey("athletes.id", ondelete="cascade"),
+        nullable=False,
+        index=True,
+    )
     elapsed_time = Column(Integer, nullable=False)  # Seconds
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
@@ -90,10 +128,21 @@ class Ride(StravaEntity):
 
     timezone = Column(String(255), nullable=True)
 
-    geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
-    weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
-    photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
-    track = orm.relationship("RideTrack", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
+    geo = orm.relationship(
+        "RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan"
+    )
+    weather = orm.relationship(
+        "RideWeather",
+        uselist=False,
+        backref="ride",
+        cascade="all, delete, delete-orphan",
+    )
+    photos = orm.relationship(
+        "RidePhoto", backref="ride", cascade="all, delete, delete-orphan"
+    )
+    track = orm.relationship(
+        "RideTrack", uselist=False, backref="ride", cascade="all, delete, delete-orphan"
+    )
 
     photos_fetched = Column(Boolean, default=None, nullable=True)
     track_fetched = Column(Boolean, default=None, nullable=True)
@@ -107,52 +156,63 @@ class Ride(StravaEntity):
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(Base):
-    __tablename__ = 'ride_geo'
-    __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8'}  # MyISAM for spatial indexes
+    __tablename__ = "ride_geo"
+    __table_args__ = {
+        "mysql_engine": "MyISAM",
+        "mysql_charset": "utf8",
+    }  # MyISAM for spatial indexes
 
-    ride_id = Column(BigInteger, ForeignKey('rides.id'), primary_key=True)
+    ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
     start_geo = GeometryColumn(Point(2), nullable=False)
     end_geo = GeometryColumn(Point(2), nullable=False)
 
     def __repr__(self):
-        return '<{0} ride_id={1} start={2}>'.format(self.__class__.__name__,
-                                                    self.ride_id,
-                                                    self.start_geo)
+        return "<{0} ride_id={1} start={2}>".format(
+            self.__class__.__name__, self.ride_id, self.start_geo
+        )
 
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideTrack(Base):
-    __tablename__ = 'ride_tracks'
-    __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8mb4'}  # MyISAM for spatial indexes
+    __tablename__ = "ride_tracks"
+    __table_args__ = {
+        "mysql_engine": "MyISAM",
+        "mysql_charset": "utf8mb4",
+    }  # MyISAM for spatial indexes
 
-    ride_id = Column(BigInteger, ForeignKey('rides.id'), primary_key=True)
+    ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
     gps_track = GeometryColumn(LineString(2), nullable=False)
     elevation_stream = Column(satypes.JSONEncodedText, nullable=True)
     time_stream = Column(satypes.JSONEncodedText, nullable=True)
 
     def __repr__(self):
-        return '<{0} ride_id={1}>'.format(self.__class__.__name__, self.ride_id)
+        return "<{0} ride_id={1}>".format(self.__class__.__name__, self.ride_id)
 
 
 class RideEffort(Base):
-    __tablename__ = 'ride_efforts'
-    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8mb4'}  # MyISAM for spatial indexes
+    __tablename__ = "ride_efforts"
+    __table_args__ = {
+        "mysql_engine": "InnoDB",
+        "mysql_charset": "utf8mb4",
+    }  # MyISAM for spatial indexes
     id = Column(BigInteger, primary_key=True, autoincrement=False)
-    ride_id = Column(BigInteger, ForeignKey('rides.id', ondelete="cascade"), index=True)
+    ride_id = Column(BigInteger, ForeignKey("rides.id", ondelete="cascade"), index=True)
     segment_name = Column(String(255), nullable=False)
     segment_id = Column(BigInteger, nullable=False, index=True)
     elapsed_time = Column(Integer, nullable=False)
 
     def __repr__(self):
-        return '<{} id={} segment_name={!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
+        return "<{} id={} segment_name={!r}>".format(
+            self.__class__.__name__, self.id, self.segment_name
+        )
 
 
 class RidePhoto(Base):
-    __tablename__ = 'ride_photos'
+    __tablename__ = "ride_photos"
 
     id = Column(String(191), primary_key=True, autoincrement=False)
     source = Column(Integer, nullable=False, default=2)
-    ride_id = Column(BigInteger, ForeignKey('rides.id', ondelete="cascade"), index=True)
+    ride_id = Column(BigInteger, ForeignKey("rides.id", ondelete="cascade"), index=True)
     ref = Column(String(255), nullable=True)
     caption = Column(Text, nullable=True)
 
@@ -165,9 +225,15 @@ class RidePhoto(Base):
         if self.img_l:
             if self.source == 1:
                 try:
-                    (width, height) = re.match('.+-(\d+)x(\d+)\.\w+$', self.img_l).groups()
+                    (width, height) = re.match(
+                        ".+-(\d+)x(\d+)\.\w+$", self.img_l
+                    ).groups()
                 except AttributeError:
-                    warnings.warn("Unable to get width and height from source=1 image url: {}".format(self.img_l))
+                    warnings.warn(
+                        "Unable to get width and height from source=1 image url: {}".format(
+                            self.img_l
+                        )
+                    )
             else:
                 (width, height) = (612, 612)
         return (width, height)
@@ -177,12 +243,14 @@ class RidePhoto(Base):
     # upload_date = Column(DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
 
     def __repr__(self):
-        return '<{} id={} primary={!r}>'.format(self.__class__.__name__, self.id, self.primary)
+        return "<{} id={} primary={!r}>".format(
+            self.__class__.__name__, self.id, self.primary
+        )
 
 
 class RideWeather(Base):
-    __tablename__ = 'ride_weather'
-    ride_id = Column(BigInteger, ForeignKey('rides.id'), primary_key=True)
+    __tablename__ = "ride_weather"
+    ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
 
     ride_temp_start = Column(Float, nullable=True)
     ride_temp_end = Column(Float, nullable=True)
@@ -203,7 +271,9 @@ class RideWeather(Base):
     sunset = Column(Time, nullable=True)
 
     def __repr__(self):
-        return '<{0} ride_id={1}>'.format(self.__class__.__name__, self.id, self.segment_name)
+        return "<{0} ride_id={1}>".format(
+            self.__class__.__name__, self.id, self.segment_name
+        )
 
 
 # Setup Geometry columns

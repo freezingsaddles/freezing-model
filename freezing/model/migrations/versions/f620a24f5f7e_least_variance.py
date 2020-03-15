@@ -10,12 +10,13 @@ Create Date: 2020-01-03 23:06:50.491509
 """
 
 # revision identifiers, used by Alembic.
-revision = 'f620a24f5f7e'
-down_revision = 'b4d003c71167'
+revision = "f620a24f5f7e"
+down_revision = "b4d003c71167"
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
              create or replace view variance_by_day as
                 select
                   ds.athlete_id,
@@ -38,11 +39,14 @@ def upgrade():
                 from
                   daily_scores ds
                 group by ds.athlete_id;
-               """)
+               """
+    )
 
 
 def downgrade():
-    op.execute("""
+    op.execute(
+        """
                drop view variance_by_day
                ;
-               """)
+               """
+    )

@@ -14,11 +14,11 @@ def create_config(sqlalchemy_url: str) -> Config:
 
     :rtype: :class:`alembic.config.Config`
     """
-    alembic_repository = 'freezing.model:migrations'
+    alembic_repository = "freezing.model:migrations"
 
     alembic_cfg = Config()
-    alembic_cfg.set_main_option('script_location', alembic_repository)
-    alembic_cfg.set_main_option('sqlalchemy.url', sqlalchemy_url)
+    alembic_cfg.set_main_option("script_location", alembic_repository)
+    alembic_cfg.set_main_option("sqlalchemy.url", sqlalchemy_url)
 
     return alembic_cfg
 

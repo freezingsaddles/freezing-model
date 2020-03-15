@@ -16,7 +16,17 @@ from freezing.model.exc import DatabaseVersionError
 from freezing.model import meta, migrationsutil
 from freezing.model.config import config as model_config
 from freezing.model.autolog import log
-from freezing.model.orm import Team, Athlete, RideError, Ride, RideGeo, RideTrack, RideEffort, RidePhoto, RideWeather
+from freezing.model.orm import (
+    Team,
+    Athlete,
+    RideError,
+    Ride,
+    RideGeo,
+    RideTrack,
+    RideEffort,
+    RidePhoto,
+    RideWeather,
+)
 
 
 # Make the list of managed tables explicit here.  These tables will be automatically created by sqlalchemy
@@ -30,7 +40,7 @@ MANAGED_TABLES = [
     RideTrack.__table__,
     RideEffort.__table__,
     RidePhoto.__table__,
-    RideWeather.__table__
+    RideWeather.__table__,
 ]
 
 
@@ -42,7 +52,9 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
-    engine = create_engine(sqlalchemy_url, pool_recycle=3600)  # pool_recycle is for mysql
+    engine = create_engine(
+        sqlalchemy_url, pool_recycle=3600
+    )  # pool_recycle is for mysql
 
     sm = sessionmaker(autoflush=True, autocommit=False, bind=engine)
     meta.engine = engine
@@ -83,10 +95,19 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
             try:
                 alembic_script.get_revisions(installed)
             except CommandError:
-                warnings.warn("Unknown db revision {} installed, ignoring db upgrade.".format(installed))
+                warnings.warn(
+                    "Unknown db revision {} installed, ignoring db upgrade.".format(
+                        installed
+                    )
+                )
             else:
                 if latest != installed:
-                    log.info("Installed database ({0}) does not match latest available ({1}). (UPGRADING)".format(installed, latest), UserWarning)
+                    log.info(
+                        "Installed database ({0}) does not match latest available ({1}). (UPGRADING)".format(
+                            installed, latest
+                        ),
+                        UserWarning,
+                    )
                     command.upgrade(alembic_cfg, "head")
         else:
             log.info("Skipping database upgrade.")
@@ -98,11 +119,11 @@ class CreateView(Executable, ClauseElement):
         self.select = select
 
 
-@compiles(CreateView, 'mysql')
+@compiles(CreateView, "mysql")
 def visit_create_view(element, compiler, **kw):
     return "CREATE VIEW IF NOT EXISTS %s AS %s" % (
         element.name,
-        compiler.process(element.select, literal_binds=True)
+        compiler.process(element.select, literal_binds=True),
     )
 
 
@@ -116,7 +137,8 @@ def drop_supplemental_db_objects(engine: Engine):
 def create_supplemental_db_objects(engine: Engine):
     # Create VIEWS that may be helpful.
 
-    _v_daily_scores_create = sa.DDL("""
+    _v_daily_scores_create = sa.DDL(
+        """
         create view daily_scores as
         select
           A.team_id,
@@ -137,11 +159,15 @@ def create_supplemental_db_objects(engine: Engine):
           A.team_id,
           ride_date
         ;
-    """.format(model_config.TIMEZONE))
+    """.format(
+            model_config.TIMEZONE
+        )
+    )
 
     engine.execute(_v_daily_scores_create)
 
-    _v_buid_ride_daylight = sa.DDL("""
+    _v_buid_ride_daylight = sa.DDL(
+        """
         create view _build_ride_daylight as
         select R.id as ride_id, date(R.start_date) as ride_date,
         sec_to_time(R.elapsed_time) as elapsed,
@@ -152,30 +178,36 @@ def create_supplemental_db_objects(engine: Engine):
         from rides R
         join ride_weather W on W.ride_id = R.id
         ;
-        """)
+        """
+    )
 
     engine.execute(_v_buid_ride_daylight)
 
-    _v_ride_daylight = sa.DDL("""
+    _v_ride_daylight = sa.DDL(
+        """
         create view ride_daylight as
         select ride_id, ride_date, start_time, end_time, sunrise, sunset, moving,
         IF(start_time < sunrise, LEAST(TIMEDIFF(sunrise, start_time), moving), sec_to_time(0)) as before_sunrise,
         IF(end_time > sunset, LEAST(TIMEDIFF(end_time, sunset), moving), sec_to_time(0)) as after_sunset
         from _build_ride_daylight
         ;
-        """)
+        """
+    )
 
     engine.execute(_v_ride_daylight)
 
-    _v_leaderboard_athletes = sa.DDL("""
+    _v_leaderboard_athletes = sa.DDL(
+        """
        create view lbd_athletes as select a.id, a.name, a.display_name, a.team_id from athletes a
         join teams T on T.id=a.team_id where not T.leaderboard_exclude
         ;
-        """)
+        """
+    )
 
     engine.execute(_v_leaderboard_athletes)
 
-    _v_100_mile_team_score = sa.DDL("""
+    _v_100_mile_team_score = sa.DDL(
+        """
         create or replace VIEW `weekly_stats` AS
             select
                 `daily_scores`.`athlete_id` AS `athlete_id`,
@@ -208,11 +240,13 @@ def create_supplemental_db_objects(engine: Engine):
                 `daily_scores`.`athlete_id`,
                 week(`daily_scores`.`ride_date`,3)
         ;
-        """)
+        """
+    )
 
     engine.execute(_v_100_mile_team_score)
 
-    _v_daily_variance = sa.DDL("""
+    _v_daily_variance = sa.DDL(
+        """
              create or replace view variance_by_day as
                 select
                   ds.athlete_id,
@@ -235,6 +269,7 @@ def create_supplemental_db_objects(engine: Engine):
                 from
                   daily_scores ds
                 group by ds.athlete_id;
-            """)
+            """
+    )
 
     engine.execute(_v_daily_variance)
