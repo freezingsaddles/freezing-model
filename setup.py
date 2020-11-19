@@ -12,7 +12,7 @@ except ImportError: # for pip <= 9.0.3
 
 from setuptools import setup, find_packages
 
-version = '0.3.2'
+version = '0.3.3'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
@@ -23,7 +23,12 @@ install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requi
 
 # reqs is a list of requirement
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']
-reqs = [str(ir.req) for ir in install_reqs]
+# This started failing on some Docker builds, for example: https://hub.docker.com/repository/registry-1.docker.io/freezingsaddles/freezing-web/builds/3b84dc71-e91b-4e7e-af3f-3eb41b40d5b8
+# Thanks Mehant Kammakomati and Stack Overflow for the fix: https://stackoverflow.com/a/62127548
+try:
+    reqs = [str(ir.req) for ir in install_reqs]
+except:
+    reqs = [str(ir.requirement) for ir in install_reqs]
 
 setup(
     name='freezing-model',
