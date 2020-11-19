@@ -11,13 +11,13 @@ def parse_requirements(filename):
 
 from setuptools import setup, find_packages
 
-version = '0.5.8'
+version = '0.5.10'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
 """
 
-install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'), session=False)
+install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'))
 
 setup(
     name='freezing-model',
