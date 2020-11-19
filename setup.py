@@ -3,15 +3,22 @@ import os.path
 import re
 import warnings
 
+def simplify_ext(line):
+    pattern = r"^.*egg=(.*)$"
+    matches = re.findall(pattern, line)
+    for match in matches:
+        return match
+    return line
+
 # Thanks https://stackoverflow.com/a/39041067
 def parse_requirements(filename):
     """ load requirements from a pip requirements file """
     lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith("#")]
+    return [simplify_ext(line) for line in lineiter if line and not line.startswith("#")]
 
 from setuptools import setup, find_packages
 
-version = '0.5.11'
+version = '0.5.12'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
