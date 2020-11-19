@@ -11,7 +11,7 @@ def parse_requirements(filename):
 
 from setuptools import setup, find_packages
 
-version = '0.5.10'
+version = '0.5.11'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
