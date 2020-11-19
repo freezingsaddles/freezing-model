@@ -3,21 +3,22 @@ import os.path
 import re
 import warnings
 
-# Thanks https://stackoverflow.com/a/39041067
-def parse_requirements(filename):
-    """ load requirements from a pip requirements file """
-    lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith("#")]
-
 from setuptools import setup, find_packages
 
-version = '0.5.11'
+version = '0.5.12'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
 """
 
-install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'))
+install_reqs = [
+'SQLAlchemy>=1.2.1,<1.3.0',
+'GeoAlchemy',
+'alembic==0.9.7',
+'marshmallow==2.15.1',
+'marshmallow-enum==1.4.1',
+'PyMySQL==0.8.0'
+]
 
 setup(
     name='freezing-model',
