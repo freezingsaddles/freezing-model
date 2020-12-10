@@ -23,5 +23,22 @@ variable, for example:
     PYTHONPATH=$(pwd) alembic current
     PYTHONPATH=$(pwd) alembic upgrade head
 
+### Coding standards
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
 
+Useful Queries
+--------------
+(TODO: This is probably not the best place for this documentation, but I'm not sure where else to put it)
 
+Beyond the model definitions there are a few other useful SQL utilities and queries that can help in operations:
+
+The script [bin/registrants.ps1](bin/registrants.ps1), given a CSV export from the WordPress registration site for Freezing Saddles, can generate a `registrants` table in the `freezing` database that is useful for determining who has registered but has not authorized properly in the database.
+
+These queries can find users who need to authorize and generate a list of emails 
+```
+select regnum, id, username, name, email, registered_on from registrants r where id not in (select id from athletes); /* Athletes who have never authorized with the freezingsaddles.org site */
+
+select r.regnum, a.id, r.username, r.name, r.email, r.registered_on from registrants r inner join athletes a on (r.id = a.id) where a.team_id is null; /* Athletes that need to re-authorize because we can't read their teams */
+
+select email from registrants where id not in (select id from athletes) union select r.email from registrants r inner join athletes a on (r.id = a.id) where a.team_id is null; /* Emails of users from both of the above groups who need to authorize in Strava */
+```

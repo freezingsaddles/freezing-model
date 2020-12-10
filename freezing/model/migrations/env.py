@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from alembic import context
-from freezing.model import meta
+from freezing.model import config, meta
 from logging.config import fileConfig
 from os import environ
 from sqlalchemy import create_engine, engine_from_config, pool
@@ -11,7 +11,7 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if (config.config_file_name):
+if config.config_file_name:
     fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
@@ -40,9 +40,8 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     if not url:
-        url = environ['SQLALCHEMY_URL']
-    context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True)
+        url = freezing.model.config.SQLALCHEMY_URL
+    context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
 
     with context.begin_transaction():
         context.run_migrations()
@@ -56,26 +55,23 @@ def run_migrations_online():
 
     """
 
-    if (meta.engine):
+    if meta.engine:
         # This is the path taken when migrating from freezing-web
         print("run_migrations_online: use meta.engine to get connection")
         connectable = meta.engine
-    if (environ['SQLALCHEMY_URL']):
+    if environ["SQLALCHEMY_URL"]:
         print("run_migrations_online: use SQLALCHEMY_URL var for connection")
-        connectable = create_engine(environ['SQLALCHEMY_URL'],
-                                    poolclass=pool.NullPool)
+        connectable = create_engine(environ["SQLALCHEMY_URL"], poolclass=pool.NullPool)
     else:
         print("run_migrations_online: use engine_from_config for connection")
         connectable = engine_from_config(
             config.get_section(config.config_ini_section),
-            prefix='sqlalchemy.',
-            poolclass=pool.NullPool)
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+        )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
