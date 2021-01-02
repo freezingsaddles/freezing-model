@@ -5,7 +5,7 @@ import warnings
 
 from setuptools import setup, find_packages
 
-version = '0.5.12'
+version = '0.5.15'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
@@ -15,9 +15,9 @@ install_reqs = [
 'SQLAlchemy>=1.2.1,<1.3.0',
 'GeoAlchemy',
 'alembic==0.9.7',
-'marshmallow==2.15.1',
+'marshmallow==3.5.1',
 'marshmallow-enum==1.4.1',
-'PyMySQL==0.8.0'
+'PyMySQL==0.9.3'
 ]
 
 setup(
