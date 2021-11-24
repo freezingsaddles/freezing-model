@@ -45,7 +45,7 @@ class StravaEntity(Base):
             try:
                 setattr(self, k, v)
             except AttributeError:
-                raise AttributeError(
+                warnings.warn(
                     "Unable to set attribute {0} on {1}".format(
                         k, self.__class__.__name__
                     )
