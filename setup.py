@@ -5,7 +5,7 @@ import warnings
 
 from setuptools import setup, find_packages
 
-version = '0.5.17'
+version = '0.5.18'
 
 long_description = """
 freezing-model is the database model and message definitions shared by freezing saddles components.
