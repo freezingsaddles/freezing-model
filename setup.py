@@ -13,7 +13,7 @@ freezing-model is the database model and message definitions shared by freezing 
 
 install_reqs = [
 'SQLAlchemy>=1.2.1,<1.3.0',
-'https://github.com/hozn/GeoAlchemy/archive/0.7.3dev1.tar.gz',
+'GeoAlchemy',
 'alembic==0.9.7',
 'marshmallow==3.5.1',
 'marshmallow-enum==1.4.1',
