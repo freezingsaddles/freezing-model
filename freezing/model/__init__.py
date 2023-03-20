@@ -26,6 +26,7 @@ from freezing.model.orm import (
     RideEffort,
     RidePhoto,
     RideWeather,
+    Tribe,
 )
 
 
@@ -41,6 +42,7 @@ MANAGED_TABLES = [
     RideEffort.__table__,
     RidePhoto.__table__,
     RideWeather.__table__,
+    Tribe.__table__,
 ]
 
 

@@ -272,7 +272,27 @@ class RideWeather(Base):
 
     def __repr__(self):
         return "<{0} ride_id={1}>".format(
-            self.__class__.__name__, self.id, self.segment_name
+            self.__class__.__name__, self.ride_id
+        )
+
+
+class Tribe(Base):
+    """
+    """
+    __tablename__ = 'tribes'
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    athlete_id = Column(
+        BigInteger,
+        ForeignKey('athletes.id', ondelete='cascade'),
+        nullable=False,
+        index=True
+    )
+    tribal_group = Column(String(255), nullable=False)
+    tribe_name = Column(String(255), nullable=False)
+
+    def __repr__(self):
+        return '<{0} id={1} tribe_name={2}>'.format(
+            self.__class__.__name__, self.id, self.tribe_name
         )
 
 
