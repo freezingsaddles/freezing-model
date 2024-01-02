@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-version = "0.7.8"
+version = "0.7.9"
 
 long_description = """
 freezing-model is the database model and message definitions
