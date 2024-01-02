@@ -1,8 +1,6 @@
 import warnings
 
 import sqlalchemy as sa
-from freezing.model.monkeypatch import collections
-collections()
 from alembic import command
 from alembic.script import ScriptDirectory
 from alembic.util import CommandError
