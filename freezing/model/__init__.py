@@ -1,3 +1,4 @@
+import sys
 import warnings
 
 import sqlalchemy as sa
@@ -30,8 +31,9 @@ from freezing.model.orm import (
 )
 
 
-# Make the list of managed tables explicit here.  These tables will be automatically created by sqlalchemy
-# in init_model if they do not exist *and* the database appears to be empty.
+# Make the list of managed tables explicit here.
+# These tables will be automatically created by sqlalchemy in init_model
+# if they do not exist *and* the database appears to be empty.
 MANAGED_TABLES = [
     Team.__table__,
     Athlete.__table__,
@@ -44,6 +46,28 @@ MANAGED_TABLES = [
     RideWeather.__table__,
     Tribe.__table__,
 ]
+
+
+def monkeypatch_collections():
+    """
+    Monkeypatch collections to get Alembic to work
+
+    The alembic package is throwing errors because some aliases in collections
+    were removed in Python 3.10.
+
+    Adapted from MIT licensed code at:
+        https://github.com/healthvana/h2/commit/d67c6ca10eb7f79c0737c37fdecfe651307a7414
+    Thanks to:
+        https://github.com/jazzband/django-push-notifications/issues/622#issuecomment-1234497703
+    """
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 10:
+        import collections
+        from collections import abc
+
+        collections.Iterable = abc.Iterable
+        collections.Mapping = abc.Mapping
+        collections.MutableSet = abc.MutableSet
+        collections.MutableMapping = abc.MutableMapping
 
 
 def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = True):
@@ -67,8 +91,8 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     alembic_script = ScriptDirectory.from_config(alembic_cfg)
 
     # Check to see whether the database has already been created or not.
-    # Based on this, we know whether we need to upgrade the database or mark the database
-    # as the latest version.
+    # Based on this, we know whether we need to upgrade the database or
+    # mark the database as the latest version.
 
     inspector = Inspector.from_engine(engine)
 
