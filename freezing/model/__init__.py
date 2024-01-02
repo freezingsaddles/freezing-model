@@ -1,7 +1,8 @@
-import sys
 import warnings
 
 import sqlalchemy as sa
+import freezing.model.monkeypatch
+freezing.model.monkeypatch.collections()
 from alembic import command
 from alembic.script import ScriptDirectory
 from alembic.util import CommandError
@@ -9,11 +10,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql.expression import Executable, ClauseElement
 
-from freezing.model.exc import DatabaseVersionError
 from freezing.model import meta, migrationsutil
 from freezing.model.config import config as model_config
 from freezing.model.autolog import log
@@ -46,28 +45,6 @@ MANAGED_TABLES = [
     RideWeather.__table__,
     Tribe.__table__,
 ]
-
-
-def monkeypatch_collections():
-    """
-    Monkeypatch collections to get Alembic to work
-
-    The alembic package is throwing errors because some aliases in collections
-    were removed in Python 3.10.
-
-    Adapted from MIT licensed code at:
-        https://github.com/healthvana/h2/commit/d67c6ca10eb7f79c0737c37fdecfe651307a7414
-    Thanks to:
-        https://github.com/jazzband/django-push-notifications/issues/622#issuecomment-1234497703
-    """
-    if sys.version_info.major >= 3 and sys.version_info.minor >= 10:
-        import collections
-        from collections import abc
-
-        collections.Iterable = abc.Iterable
-        collections.Mapping = abc.Mapping
-        collections.MutableSet = abc.MutableSet
-        collections.MutableMapping = abc.MutableMapping
 
 
 def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = True):
