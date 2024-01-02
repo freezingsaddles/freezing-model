@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-version = "0.7.10"
+version = "0.7.11"
 
 long_description = """
 freezing-model is the database model and message definitions
@@ -11,10 +11,9 @@ shared by Freezing Saddles components.
 install_reqs = [
     "SQLAlchemy>=1.2.1,<1.3.0",
     "GeoAlchemy",
+    "PyMySQL==0.9.3",
     "alembic==0.9.7",
-    "marshmallow",
-    "marshmallow-enum",
-    "PyMySQL",
+    "marshmallow==3.14.1",
 ]
 
 setup(
