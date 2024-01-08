@@ -1,12 +1,10 @@
 import logging
 import os
-from typing import List
-from datetime import datetime, tzinfo
+from datetime import tzinfo
 
 from colorlog import ColoredFormatter
 from envparse import env
 
-import arrow
 import pytz
 
 
@@ -22,7 +20,9 @@ class Config:
 
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
 
-    SQLALCHEMY_URL = env("SQLALCHEMY_URL")
+    # It is valid to use the model classes without this configured, as we do from
+    # freezing-nq, so this variable is optional.
+    SQLALCHEMY_URL = env("SQLALCHEMY_URL", default="")
 
     TIMEZONE: tzinfo = env(
         "TIMEZONE",
@@ -36,7 +36,8 @@ config = Config()
 
 def init_logging(loglevel: int = logging.INFO, color: bool = False):
     """
-    Initialize the logging subsystem and create a logger for this class, using passed in optparse options.
+    Initialize the logging subsystem and create a logger for this class,
+    using passed in optparse options.
 
     :param level: The log level (e.g. logging.DEBUG)
     :return:
