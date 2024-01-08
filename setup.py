@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-version = "0.7.13"
+version = "0.7.14"
 
 long_description = """
 freezing-model is the database model and message definitions
@@ -14,6 +14,7 @@ install_reqs = [
     "PyMySQL==0.9.3",
     "alembic==0.9.7",
     "marshmallow==3.14.1",
+    "marshmallow-enum"
 ]
 
 setup(
