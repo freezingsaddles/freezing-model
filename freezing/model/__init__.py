@@ -54,7 +54,7 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
-    # Before we go any farther, monkeypatch Collections per
+    # Monkeypatch Collections to get old alembic version to work
     collections()
     engine = create_engine(
         sqlalchemy_url, pool_recycle=3600
