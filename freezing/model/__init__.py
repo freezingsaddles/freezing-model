@@ -8,13 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql.expression import Executable, ClauseElement
 
-from freezing.model.exc import DatabaseVersionError
 from freezing.model import meta, migrationsutil
 from freezing.model.config import config as model_config
+from freezing.model.monkeypatch import collections
 from freezing.model.autolog import log
 from freezing.model.orm import (
     Team,
@@ -30,8 +29,9 @@ from freezing.model.orm import (
 )
 
 
-# Make the list of managed tables explicit here.  These tables will be automatically created by sqlalchemy
-# in init_model if they do not exist *and* the database appears to be empty.
+# Make the list of managed tables explicit here.
+# These tables will be automatically created by sqlalchemy in init_model
+# if they do not exist *and* the database appears to be empty.
 MANAGED_TABLES = [
     Team.__table__,
     Athlete.__table__,
@@ -54,6 +54,8 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
+    # Monkeypatch Collections to get old alembic version to work
+    collections()
     engine = create_engine(
         sqlalchemy_url, pool_recycle=3600
     )  # pool_recycle is for mysql
@@ -67,8 +69,8 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     alembic_script = ScriptDirectory.from_config(alembic_cfg)
 
     # Check to see whether the database has already been created or not.
-    # Based on this, we know whether we need to upgrade the database or mark the database
-    # as the latest version.
+    # Based on this, we know whether we need to upgrade the database or
+    # mark the database as the latest version.
 
     inspector = Inspector.from_engine(engine)
 

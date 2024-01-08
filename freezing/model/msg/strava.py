@@ -104,7 +104,7 @@ class SubscriptionUpdateSchema(BaseSchema):
     updates = fields.Dict()
 
     @pre_load
-    def parse_dt(self, in_data):
+    def parse_dt(self, in_data, **kwargs):
         if in_data.get("event_time"):
             in_data["event_time"] = arrow.get(in_data["event_time"]).isoformat()
         return in_data
