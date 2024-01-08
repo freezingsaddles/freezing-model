@@ -13,6 +13,7 @@ from sqlalchemy.sql.expression import Executable, ClauseElement
 
 from freezing.model import meta, migrationsutil
 from freezing.model.config import config as model_config
+from freezing.model.monkeypatch import collections
 from freezing.model.autolog import log
 from freezing.model.orm import (
     Team,
@@ -53,6 +54,8 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     :param drop: Whether to drop the tables first.
     :param check_version: Whether to ensure that the database version is up-to-date.
     """
+    # Before we go any farther, monkeypatch Collections per
+    collections()
     engine = create_engine(
         sqlalchemy_url, pool_recycle=3600
     )  # pool_recycle is for mysql
