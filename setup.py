@@ -16,7 +16,7 @@ install_reqs = [
     "colorlog==4.1.0",
     "marshmallow==3.14.1",
     "marshmallow-enum",
-    "pytz==2023.3.post1"
+    "pytz==2023.3.post1",
 ]
 
 setup(

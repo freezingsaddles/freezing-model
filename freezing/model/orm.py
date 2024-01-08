@@ -23,7 +23,7 @@ Base = declarative_base(metadata=meta.metadata)
 
 
 class _SqlView:
-    """ Empty class used to indicate that this is a SQL View and not to be created. """
+    """Empty class used to indicate that this is a SQL View and not to be created."""
 
     pass
 
@@ -41,7 +41,7 @@ class StravaEntity(Base):
     def __init__(self, id=None, name=None, **kwargs):
         self.id = id
         self.name = name
-        for (k, v) in kwargs.items():
+        for k, v in kwargs.items():
             try:
                 setattr(self, k, v)
             except AttributeError:
@@ -58,8 +58,7 @@ class StravaEntity(Base):
 
 
 class Team(StravaEntity):
-    """
-    """
+    """ """
 
     __tablename__ = "teams"
     athletes = orm.relationship("Athlete", backref="team")
@@ -67,8 +66,7 @@ class Team(StravaEntity):
 
 
 class Athlete(StravaEntity):
-    """
-    """
+    """ """
 
     __tablename__ = "athletes"
     display_name = Column(String(255), nullable=True)
@@ -84,8 +82,7 @@ class Athlete(StravaEntity):
 
 
 class RideError(StravaEntity):
-    """
-    """
+    """ """
 
     __tablename__ = "ride_errors"
     athlete_id = Column(
@@ -100,8 +97,7 @@ class RideError(StravaEntity):
 
 
 class Ride(StravaEntity):
-    """
-    """
+    """ """
 
     __tablename__ = "rides"
     athlete_id = Column(
@@ -271,27 +267,25 @@ class RideWeather(Base):
     sunset = Column(Time, nullable=True)
 
     def __repr__(self):
-        return "<{0} ride_id={1}>".format(
-            self.__class__.__name__, self.ride_id
-        )
+        return "<{0} ride_id={1}>".format(self.__class__.__name__, self.ride_id)
 
 
 class Tribe(Base):
-    """
-    """
-    __tablename__ = 'tribes'
+    """ """
+
+    __tablename__ = "tribes"
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     athlete_id = Column(
         BigInteger,
-        ForeignKey('athletes.id', ondelete='cascade'),
+        ForeignKey("athletes.id", ondelete="cascade"),
         nullable=False,
-        index=True
+        index=True,
     )
     tribal_group = Column(String(255), nullable=False)
     tribe_name = Column(String(255), nullable=False)
 
     def __repr__(self):
-        return '<{0} id={1} tribe_name={2}>'.format(
+        return "<{0} id={1} tribe_name={2}>".format(
             self.__class__.__name__, self.id, self.tribe_name
         )
 
