@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-version = "0.7.16"
+version = "0.7.17"
 
 long_description = """
 freezing-model is the database model and message definitions
@@ -13,8 +13,10 @@ install_reqs = [
     "GeoAlchemy",
     "PyMySQL==0.9.3",
     "alembic==0.9.7",
+    "colorlog==4.1.0",
     "marshmallow==3.14.1",
-    "marshmallow-enum"
+    "marshmallow-enum",
+    "pytz==2023.3.post1"
 ]
 
 setup(
