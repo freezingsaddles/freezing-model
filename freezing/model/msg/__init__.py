@@ -9,7 +9,7 @@ from marshmallow_enum import EnumField
 
 class BaseMessage:
     def __init__(self, **kwargs):
-        for (k, v) in kwargs.items():
+        for k, v in kwargs.items():
             if not hasattr(self.__class__, k):
                 raise AttributeError("No class attribute {!r}".format(k))
             setattr(self, k, v)

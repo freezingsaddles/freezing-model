@@ -15,7 +15,6 @@ import sqlalchemy as sa
 
 
 def upgrade():
-
     op.add_column(
         "ride_photos", sa.Column("source", sa.Integer, nullable=False, default=2)
     )

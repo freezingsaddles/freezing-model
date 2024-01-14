@@ -16,7 +16,6 @@ import geoalchemy as ga
 
 
 def upgrade():
-
     t = op.create_table(
         "ride_tracks",
         sa.Column(

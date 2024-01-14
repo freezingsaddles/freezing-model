@@ -15,7 +15,6 @@ import sqlalchemy as sa
 
 
 def upgrade():
-
     # NOTE: Max varchar size is 191 for indexing
     op.alter_column("ride_photos", "id", type_=sa.String(191), existing_nullable=False)
 

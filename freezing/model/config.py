@@ -17,7 +17,6 @@ _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class Config:
-
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
 
     # It is valid to use the model classes without this configured, as we do from
