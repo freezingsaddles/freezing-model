@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-version = "0.8.2"
+version = "0.8.3"
 
 long_description = """
 freezing-model is the database model and message definitions
@@ -16,7 +16,7 @@ install_reqs = [
     "colorlog==4.1.0",
     "marshmallow==3.14.1",
     "marshmallow-enum",
-    "pytz==2023.3.post1",
+    "pytz",
 ]
 
 setup(
