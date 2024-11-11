@@ -2,11 +2,9 @@ import logging
 import os
 from datetime import tzinfo
 
+import pytz
 from colorlog import ColoredFormatter
 from envparse import env
-
-import pytz
-
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 

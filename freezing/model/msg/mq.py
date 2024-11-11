@@ -1,11 +1,12 @@
 import enum
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
+
+from marshmallow import fields
+from marshmallow_enum import EnumField
 
 from freezing.model.msg import BaseMessage, BaseSchema
 from freezing.model.msg.strava import AspectType
-from marshmallow import fields
-from marshmallow_enum import EnumField
 
 
 class DefinedTubes(enum.Enum):

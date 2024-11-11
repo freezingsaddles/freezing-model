@@ -1,4 +1,5 @@
 from alembic import op
+
 from freezing.model.config import config
 
 """Fix daily scores again

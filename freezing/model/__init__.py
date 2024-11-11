@@ -8,26 +8,25 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.sql.expression import Executable, ClauseElement
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.sql.expression import ClauseElement, Executable
 
 from freezing.model import meta, migrationsutil
+from freezing.model.autolog import log
 from freezing.model.config import config as model_config
 from freezing.model.monkeypatch import collections
-from freezing.model.autolog import log
 from freezing.model.orm import (
-    Team,
     Athlete,
-    RideError,
     Ride,
-    RideGeo,
-    RideTrack,
     RideEffort,
+    RideError,
+    RideGeo,
     RidePhoto,
+    RideTrack,
     RideWeather,
+    Team,
     Tribe,
 )
-
 
 # Make the list of managed tables explicit here.
 # These tables will be automatically created by sqlalchemy in init_model
