@@ -1,5 +1,6 @@
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
+
 from freezing.model.config import config as model_config
 
 """Update daily_scores view to refelect declining points for first 10 miles

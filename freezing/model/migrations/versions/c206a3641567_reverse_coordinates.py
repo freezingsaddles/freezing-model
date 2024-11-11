@@ -12,8 +12,8 @@ down_revision = "a77103b34b0b"
 
 import re
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 _point_rx = re.compile("^POINT\((.+)\)$")
 

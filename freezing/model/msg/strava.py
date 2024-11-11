@@ -1,10 +1,10 @@
 import abc
 import enum
 from datetime import datetime
-from typing import Callable, Dict, Any
+from typing import Any, Callable, Dict
 
 import arrow
-from marshmallow import fields, Schema, post_load, pre_load
+from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow_enum import EnumField
 
 from . import BaseMessage, BaseSchema

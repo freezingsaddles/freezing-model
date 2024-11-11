@@ -1,19 +1,19 @@
 import re
 import warnings
 
-from geoalchemy import LineString, Point, GeometryColumn, GeometryDDL
+from geoalchemy import GeometryColumn, GeometryDDL, LineString, Point
 from sqlalchemy import (
-    orm,
-    Column,
     BigInteger,
-    Integer,
-    String,
     Boolean,
-    ForeignKey,
+    Column,
     DateTime,
     Float,
+    ForeignKey,
+    Integer,
+    String,
     Text,
     Time,
+    orm,
 )
 from sqlalchemy.ext.declarative import declarative_base
 

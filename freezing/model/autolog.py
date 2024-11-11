@@ -1,7 +1,8 @@
 from __future__ import absolute_import
-import sys
-import logging
+
 import inspect
+import logging
+import sys
 
 
 class EagerFormattingAdapter(logging.LoggerAdapter):

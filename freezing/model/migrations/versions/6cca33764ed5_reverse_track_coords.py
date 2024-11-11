@@ -13,8 +13,8 @@ down_revision = "c206a3641567"
 
 import re
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 _linestring_rx = re.compile("^LINESTRING\((.+)\)$")
 

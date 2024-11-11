@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import TypeDecorator, TEXT
+from sqlalchemy import TEXT, TypeDecorator
 
 
 class JSONEncodedText(TypeDecorator):

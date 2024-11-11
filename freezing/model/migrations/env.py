@@ -1,9 +1,12 @@
 from __future__ import with_statement
-from alembic import context
-from freezing.model import config, meta
+
 from logging.config import fileConfig
 from os import environ
+
+from alembic import context
 from sqlalchemy import create_engine, engine_from_config, pool
+
+from freezing.model import config, meta
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
