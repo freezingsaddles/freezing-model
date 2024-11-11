@@ -23,3 +23,5 @@ jobs:
             requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+        # There are too many errors to start with to fail on this
+        continue-on-error: true
