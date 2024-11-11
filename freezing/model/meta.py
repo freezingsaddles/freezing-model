@@ -1,4 +1,5 @@
 """SQLAlchemy Metadata and Session object"""
+
 import contextlib
 from typing import Callable, ContextManager
 from sqlalchemy import MetaData
