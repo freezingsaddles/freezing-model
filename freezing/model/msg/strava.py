@@ -69,9 +69,9 @@ class SubscriptionCallbackSchema(BaseSchema):
 
     _model_class = SubscriptionCallback
 
-    hub_mode = fields.Str(load_from="hub.mode")
-    hub_verify_token = fields.Str(load_from="hub.verify_token")
-    hub_challenge = fields.Str(load_from="hub.challenge")
+    hub_mode = fields.Str(data_key="hub.mode")
+    hub_verify_token = fields.Str(data_key="hub.verify_token")
+    hub_challenge = fields.Str(data_key="hub.challenge")
 
 
 class SubscriptionUpdate(BaseMessage):
