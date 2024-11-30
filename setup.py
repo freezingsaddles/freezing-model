@@ -13,8 +13,8 @@ install_reqs = [
     "GeoAlchemy",
     "PyMySQL",
     "alembic==0.9.7",
-    "colorlog==4.1.0",
-    "marshmallow==3.14.1",
+    "colorlog",
+    "marshmallow",
     "marshmallow-enum",
     "pytz",
 ]
