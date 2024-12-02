@@ -24,7 +24,7 @@ variable, for example:
     PYTHONPATH=$(pwd) alembic upgrade head
 
 ### Coding standards
-The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the lint dependencies to get these tools (`pip install -e '.[lint]''`).
 
 Developing
 ----------
@@ -32,8 +32,7 @@ This project uses [setuptools](https://setuptools.readthedocs.io/en/latest/) for
 
     python3 -m venv .venv
     source .venv/bin/activate
-    pip install -e .
-    pip install -e '.[lint]'  # optional - install linters
+    pip install -e '.[lint]'  # install with linters for development
 
 ### Linting
 This project uses [flake8](http://flake8.pycqa.org/en/latest/) for linting. To run the linter:
