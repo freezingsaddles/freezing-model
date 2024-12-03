@@ -1,7 +1,6 @@
 import re
 import warnings
 
-from geoalchemy import GeometryColumn, GeometryDDL, LineString, Point
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -159,13 +158,34 @@ class RideGeo(Base):
     }  # MyISAM for spatial indexes
 
     ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
-    start_geo = GeometryColumn(Point(2), nullable=False)
-    end_geo = GeometryColumn(Point(2), nullable=False)
+    start_geo = Column(String(255), nullable=False)  # GeometryColumn(Point(2)
+    end_geo = Column(String(255), nullable=False)  # GeometryColumn(Point(2)
 
     def __repr__(self):
         return "<{0} ride_id={1} start={2}>".format(
             self.__class__.__name__, self.ride_id, self.start_geo
         )
+
+
+# mysql> alter table ride_tracks add column gps_track_txt text;
+# Query OK, 0 rows affected (0.04 sec)
+# Records: 0  Duplicates: 0  Warnings: 0
+
+# mysql> update ride_tracks set gps_track_txt = ST_AsWKT(gps_track);
+# Query OK, 1 row affected (0.01 sec)
+# Rows matched: 1  Changed: 1  Warnings: 0
+
+# mysql> alter table ride_tracks modify column gps_track_txt text not null;
+# Query OK, 0 rows affected (0.05 sec)
+# Records: 0  Duplicates: 0  Warnings: 0
+
+# mysql> alter table ride_tracks drop column gps_track;
+# Query OK, 0 rows affected (0.02 sec)
+# Records: 0  Duplicates: 0  Warnings: 0
+
+# mysql> alter table ride_tracks rename column gps_track_txt to gps_track;
+# Query OK, 0 rows affected (0.01 sec)
+# Records: 0  Duplicates: 0  Warnings: 0
 
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
@@ -177,7 +197,7 @@ class RideTrack(Base):
     }  # MyISAM for spatial indexes
 
     ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
-    gps_track = GeometryColumn(LineString(2), nullable=False)
+    gps_track = Column(Text, nullable=False)  # GeometryColumn(LineString(2)
     elevation_stream = Column(satypes.JSONEncodedText, nullable=True)
     time_stream = Column(satypes.JSONEncodedText, nullable=True)
 
@@ -289,10 +309,6 @@ class Tribe(Base):
             self.__class__.__name__, self.id, self.tribe_name
         )
 
-
-# Setup Geometry columns
-GeometryDDL(RideGeo.__table__)
-GeometryDDL(RideTrack.__table__)
 
 # Opting for a more explicit approach to specifyign which tables are to be managed by SA.
 #
