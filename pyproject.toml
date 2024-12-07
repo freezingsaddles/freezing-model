@@ -35,10 +35,22 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-lint = [
+dev = [
     "black==24.3.0",
+    "fawltydeps==0.17.0",
     "flake8==7.0.0",
-    "flake8-pyproject==1.2.3",
+    "flake8-pyproject",
+    "flake8-bugbear",
+    "flake8-builtins",
+    "flake8-comprehensions",
+    "flake8-docstrings",
+    "flake8-eradicate",
+    "flake8-print",
+    "flake8-return",
+    "flake8-simplify",
+    "flake8-sorted-keys",
+    "flake8-todo",
+    "flake8-raise",
     "isort==5.13.2",
 ]
 
@@ -47,7 +59,13 @@ profile = "black"
 
 [tool.flake8]
 # Thanks https://www.reddit.com/r/learnpython/comments/rr6y69/comment/hqeqt68/?utm_source=share&utm_medium=web2x&context=3
-ignore = ["E203", "W503", "E501"]
+ignore = [
+    "E203",
+    "E501",
+    "W503",
+    "W503",
+]
 max-line-length = 88
 max-complexity = 39
 extend-ignore = "E203"
+inline-quotes = "double"

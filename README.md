@@ -24,7 +24,7 @@ variable, for example:
     PYTHONPATH=$(pwd) alembic upgrade head
 
 ### Coding standards
-The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the lint dependencies to get these tools (`pip install -e '.[lint]''`).
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the `dev` dependencies to get these tools (`pip install -e '.[dev]''`).
 
 Developing
 ----------

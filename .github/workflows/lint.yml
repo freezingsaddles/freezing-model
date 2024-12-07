@@ -25,3 +25,23 @@ jobs:
         uses: py-actions/flake8@v2
         # There are too many errors to start with to fail on this
         continue-on-error: true
+        with:
+          plugins: [
+            "flake8-bugbear",
+            "flake8-builtins",
+            "flake8-comprehensions",
+            "flake8-docstrings",
+            "flake8-eradicate",
+            "flake8-print",
+            "flake8-pyproject",
+            "flake8-quotes",
+            "flake8-raise"
+            "flake8-return",
+            "flake8-simplify",
+            "flake8-sorted-keys",
+            "flake8-todo",
+          ]
+      - name: fawltydeps Lint
+        uses: tweag/FawltyDeps-action@v0.2.0
+        # There are too many errors to start with to fail on this
+        continue-on-error: true
