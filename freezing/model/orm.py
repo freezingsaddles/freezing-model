@@ -288,10 +288,3 @@ class Tribe(Base):
         return "<{0} id={1} tribe_name={2}>".format(
             self.__class__.__name__, self.id, self.tribe_name
         )
-
-
-# Setup Geometry columns
-# TODO: Not needed for SqlAlchemy 2?
-#GeometryDDL(RideGeo.__table__)
-#GeometryDDL(RideTrack.__table__)
-

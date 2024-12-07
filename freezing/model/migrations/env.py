@@ -21,7 +21,7 @@ if config.config_file_name:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-#target_metadata = None
+# target_metadata = None
 target_metadata = orm.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -60,7 +60,9 @@ def run_migrations_online():
     """
 
     if environ["SQLALCHEMY_URL"]:
-        print("run_migrations_online: using SQLALCHEMY_URL environment variable for connection")
+        print(
+            "run_migrations_online: using SQLALCHEMY_URL environment variable for connection"
+        )
         connectable = create_engine(environ["SQLALCHEMY_URL"], poolclass=pool.NullPool)
     elif meta.engine:
         # This is the path taken when migrating from freezing-web
