@@ -1,3 +1,7 @@
+# Local config files
+*.cfg
+.env*
+
 # Byte-compiled / optimized / DLL files
 *$py.class
 *.py[cod]
@@ -18,12 +22,9 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-env/
 lib/
 lib64/
 parts/
 sdist/
-src/
-var/
 venv/
 wheels/
