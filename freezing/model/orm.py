@@ -15,7 +15,7 @@ from sqlalchemy import (
     Time,
     orm,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from . import meta, satypes
 
