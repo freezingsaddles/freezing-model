@@ -9,11 +9,12 @@ shared by Freezing Saddles components.
 """
 
 install_reqs = [
-    "SQLAlchemy==1.3.24",
-    "GeoAlchemy",
+    "SQLAlchemy~=1.4",
+    "GeoAlchemy2",
     "PyMySQL",
-    "alembic==0.9.7",
+    "alembic",
     "colorlog",
+    "envparse",
     "marshmallow",
     "marshmallow-enum",
     "pytz",
@@ -39,4 +40,8 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     zip_safe=True,
+    entry_points="""
+        [console_scripts]
+        freezing-model-init-db = freezing.model:init_db
+        """,
 )

@@ -6,7 +6,7 @@ from os import environ
 from alembic import context
 from sqlalchemy import create_engine, engine_from_config, pool
 
-from freezing.model import config, meta
+from freezing.model import config, meta, orm
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,7 +21,8 @@ if config.config_file_name:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+#target_metadata = None
+target_metadata = orm.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -43,7 +44,7 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     if not url:
-        url = freezing.model.config.SQLALCHEMY_URL
+        url = config.SQLALCHEMY_URL
     context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
 
     with context.begin_transaction():
@@ -58,13 +59,13 @@ def run_migrations_online():
 
     """
 
-    if meta.engine:
-        # This is the path taken when migrating from freezing-web
-        print("run_migrations_online: use meta.engine to get connection")
-        connectable = meta.engine
     if environ["SQLALCHEMY_URL"]:
-        print("run_migrations_online: use SQLALCHEMY_URL var for connection")
+        print("run_migrations_online: using SQLALCHEMY_URL environment variable for connection")
         connectable = create_engine(environ["SQLALCHEMY_URL"], poolclass=pool.NullPool)
+    elif meta.engine:
+        # This is the path taken when migrating from freezing-web
+        print("run_migrations_online: using meta.engine to get connection")
+        connectable = meta.engine
     else:
         print("run_migrations_online: use engine_from_config for connection")
         connectable = engine_from_config(
