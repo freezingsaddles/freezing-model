@@ -1,7 +1,7 @@
 import re
 import warnings
 
-from geoalchemy import GeometryColumn, GeometryDDL, LineString, Point
+from geoalchemy2 import Geometry
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -15,7 +15,7 @@ from sqlalchemy import (
     Time,
     orm,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from . import meta, satypes
 
@@ -154,13 +154,13 @@ class Ride(StravaEntity):
 class RideGeo(Base):
     __tablename__ = "ride_geo"
     __table_args__ = {
-        "mysql_engine": "MyISAM",
+        "mysql_engine": "InnoDB",
         "mysql_charset": "utf8",
     }  # MyISAM for spatial indexes
 
     ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
-    start_geo = GeometryColumn(Point(2), nullable=False)
-    end_geo = GeometryColumn(Point(2), nullable=False)
+    start_geo = Column(Geometry("POINT"), nullable=False)
+    end_geo = Column(Geometry("POINT"), nullable=False)
 
     def __repr__(self):
         return "<{0} ride_id={1} start={2}>".format(
@@ -177,7 +177,7 @@ class RideTrack(Base):
     }  # MyISAM for spatial indexes
 
     ride_id = Column(BigInteger, ForeignKey("rides.id"), primary_key=True)
-    gps_track = GeometryColumn(LineString(2), nullable=False)
+    gps_track = Column(Geometry("LINESTRING"), nullable=False)
     elevation_stream = Column(satypes.JSONEncodedText, nullable=True)
     time_stream = Column(satypes.JSONEncodedText, nullable=True)
 
@@ -288,17 +288,3 @@ class Tribe(Base):
         return "<{0} id={1} tribe_name={2}>".format(
             self.__class__.__name__, self.id, self.tribe_name
         )
-
-
-# Setup Geometry columns
-GeometryDDL(RideGeo.__table__)
-GeometryDDL(RideTrack.__table__)
-
-# Opting for a more explicit approach to specifyign which tables are to be managed by SA.
-#
-# _MANAGED_TABLES = [obj.__table__ for name, obj in inspect.getmembers(sys.modules[__name__])
-#                   if inspect.isclass(obj) and (issubclass(obj, Base) and obj is not Base)
-#                   and hasattr(obj, '__table__')
-#                   and not issubclass(obj, _SqlView)]
-#
-# register_managed_tables(_MANAGED_TABLES)

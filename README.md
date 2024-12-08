@@ -24,7 +24,7 @@ variable, for example:
     PYTHONPATH=$(pwd) alembic upgrade head
 
 ### Coding standards
-The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+The `freezing-model` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
 
 Useful Queries
 --------------
@@ -32,9 +32,9 @@ Useful Queries
 
 Beyond the model definitions there are a few other useful SQL utilities and queries that can help in operations:
 
-The script [bin/registrants.ps1](bin/registrants.ps1), given a CSV export from the WordPress registration site for Freezing Saddles, can generate a `registrants` table in the `freezing` database that is useful for determining who has registered but has not authorized properly in the database.
+The script [bin/registrants.py](bin/registrants.py), given a CSV export from the WordPress registration site for Freezing Saddles, can generate a `registrants` table in the `freezing` database that is useful for determining who has registered but has not authorized properly in the database.
 
-These queries can find users who need to authorize and generate a list of emails 
+These queries can find users who need to authorize and generate a list of emails for those users:
 ```
 select regnum, id, username, name, email, registered_on from registrants r where id not in (select id from athletes); /* Athletes who have never authorized with the freezingsaddles.org site */
 
