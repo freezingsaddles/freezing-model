@@ -10,7 +10,7 @@ Create Date: 2016-01-28 21:23:28.391271
 revision = "17b73a90925d"
 down_revision = "54627e8199c9"
 
-import geoalchemy as ga
+import geoalchemy2 as ga
 import sqlalchemy as sa
 from alembic import op
 

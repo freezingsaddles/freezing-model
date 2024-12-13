@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import ClauseElement, Executable
 
 from freezing.model import meta, migrationsutil
 from freezing.model.autolog import log
-from freezing.model.config import config as model_config
+from freezing.model.config import config
 from freezing.model.monkeypatch import collections
 from freezing.model.orm import (
     Athlete,
@@ -43,6 +43,10 @@ MANAGED_TABLES = [
     RideWeather.__table__,
     Tribe.__table__,
 ]
+
+
+def init_db():
+    init_model(config.SQLALCHEMY_URL)
 
 
 def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = True):
@@ -163,7 +167,7 @@ def create_supplemental_db_objects(engine: Engine):
           ride_date
         ;
     """.format(
-            model_config.TIMEZONE
+            config.TIMEZONE
         )
     )
 

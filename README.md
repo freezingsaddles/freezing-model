@@ -53,7 +53,7 @@ Useful Queries
 
 Beyond the model definitions there are a few other useful SQL utilities and queries that can help in operations:
 
-The script [bin/registrants.ps1](bin/registrants.ps1), given a CSV export from the WordPress registration site for Freezing Saddles, can generate a `registrants` table in the `freezing` database that is useful for determining who has registered but has not authorized properly in the database.
+The script [bin/registrants.py](bin/registrants.py), given a CSV export from the WordPress registration site for Freezing Saddles, can generate a `registrants` table in the `freezing` database that is useful for determining who has registered but has not authorized properly in the database.
 
 These queries can find users who still need to authorize with Strava and generate a list of emails for those users:
 ```
