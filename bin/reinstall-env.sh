@@ -20,9 +20,9 @@ if [[ -f requirements-test.txt ]]; then pip install -r requirements-test.txt ; f
 # This would be better if we had something like yq available in the environment
 # See https://github.com/kislyuk/yq
 # but this is good enough for now
-if grep -s '\[dependencies\]' pyproject.toml \
-    && grep -sA 1 '\[project.optional-dependencies\]' pyproject.toml \
-    | grep -s '\[dev\]'; then
+if grep -q '^dependencies *= *' pyproject.toml \
+    && grep -sA 999 '\[project.optional-dependencies\]' pyproject.toml \
+    | grep -q '^dev *= *'; then
     pip install -e '.[dev]'
 else
     pip install -e .
