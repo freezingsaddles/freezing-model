@@ -4,8 +4,9 @@ name: Lint
 on: pull_request
 
 jobs:
-  
-  # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
+
+  # Thanks to:
+  # https://black.readthedocs.io/en/stable/integrations/github_actions.html
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -20,8 +21,14 @@ jobs:
       - name: isort Lint
         uses: isort/isort-action@v1
         with:
-            requirements-files: "requirements.txt requirements-test.txt"
+          requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+        # There are too many errors to start with to fail on this
+        continue-on-error: true
+        with:
+          plugins: "flake8-bugbear flake8-builtins flake8-comprehensions flake8-docstrings flake8-eradicate flake8-print flake8-pyproject flake8-quotes flake8-raise flake8-return flake8-simplify flake8-sorted-keys flake8-todo"
+      - name: fawltydeps Lint
+        uses: tweag/FawltyDeps-action@v0.2.0
         # There are too many errors to start with to fail on this
         continue-on-error: true

@@ -1,9 +1,0 @@
-colorlog==4.1.0
-envparse
-GeoAlchemy2
-PyMySQL
-SQLAlchemy~=1.4
-alembic
-marshmallow-enum @ https://github.com/lyft/marshmallow_enum/archive/support-for-marshamallow-3.tar.gz
-marshmallow==3.23.1
-pytz==2024.2
