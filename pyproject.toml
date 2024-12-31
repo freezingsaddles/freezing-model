@@ -37,7 +37,7 @@ dependencies = [
     "enum34",
     "envparse",
     "marshmallow",
-    "marshmallow-enum",
+    "marshmallow-enum @ https://github.com/lyft/marshmallow_enum/archive/support-for-marshamallow-3.tar.gz",
     "pytz",
 ]
 
