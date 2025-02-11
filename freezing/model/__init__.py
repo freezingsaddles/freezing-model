@@ -6,7 +6,6 @@ from alembic.script import ScriptDirectory
 from alembic.util import CommandError
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql.expression import ClauseElement, Executable
@@ -14,6 +13,7 @@ from sqlalchemy.sql.expression import ClauseElement, Executable
 from freezing.model import meta, migrationsutil
 from freezing.model.autolog import log
 from freezing.model.config import config
+from freezing.model.meta import engine
 from freezing.model.monkeypatch import collections
 from freezing.model.orm import (
     Athlete,
@@ -75,7 +75,7 @@ def init_model(sqlalchemy_url: str, drop: bool = False, check_version: bool = Tr
     # Based on this, we know whether we need to upgrade the database or
     # mark the database as the latest version.
 
-    inspector = Inspector.from_engine(engine)
+    inspector = sa.inspect(engine)
 
     db_objects_created = len(inspector.get_table_names()) > 1
 
