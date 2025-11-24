@@ -196,6 +196,8 @@ class RideEffort(Base):
     segment_name = Column(String(255), nullable=False)
     segment_id = Column(BigInteger, nullable=False, index=True)
     elapsed_time = Column(Integer, nullable=False)
+    personal_record = Column(Integer, nullable=True)
+    local_legend = Column(Boolean, nullable=True)
 
     def __repr__(self):
         return "<{} id={} segment_name={!r}>".format(
@@ -222,7 +224,7 @@ class RidePhoto(Base):
             if self.source == 1:
                 try:
                     (width, height) = re.match(
-                        ".+-(\d+)x(\d+)\.\w+$", self.img_l
+                        ".+-(\\d+)x(\\d+)\\.\\w+$", self.img_l
                     ).groups()
                 except AttributeError:
                     warnings.warn(

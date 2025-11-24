@@ -15,7 +15,7 @@ import re
 import sqlalchemy as sa
 from alembic import op
 
-_point_rx = re.compile("^POINT\((.+)\)$")
+_point_rx = re.compile("^POINT\\((.+)\\)$")
 
 
 def point_wkt(lon, lat):
