@@ -16,7 +16,7 @@ import re
 import sqlalchemy as sa
 from alembic import op
 
-_linestring_rx = re.compile("^LINESTRING\((.+)\)$")
+_linestring_rx = re.compile("^LINESTRING\\((.+)\\)$")
 
 
 def parse_linestring(wkt):
