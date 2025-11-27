@@ -148,6 +148,7 @@ class Ride(StravaEntity):
 
     private = Column(Boolean, default=False, nullable=False)
     manual = Column(Boolean, default=None, nullable=True)
+    visibility = Column(String(255), nullable=True)
 
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
