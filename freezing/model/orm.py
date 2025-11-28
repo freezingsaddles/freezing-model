@@ -110,9 +110,10 @@ class Ride(StravaEntity):
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
     moving_time = Column(Integer, nullable=False, index=True)  #
-    elevation_gain = Column(Integer, nullable=True)  # 269.6 (feet)
+    elevation_gain = Column(Integer, nullable=True)  # 270 (feet)
     average_speed = Column(Float)  # mph
     maximum_speed = Column(Float)  # mph
+    average_temp = Column(Integer, nullable=True)  # 99 (F)
     start_date = Column(DateTime, nullable=False, index=True)  # 2010-02-28T08:31:35Z
     distance = Column(Float, nullable=False, index=True)  # 82369.1 (meters)
     location = Column(String(255), nullable=True)
