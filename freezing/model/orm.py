@@ -148,7 +148,6 @@ class Ride(StravaEntity):
     resync_date = Column(DateTime, nullable=True)
 
     private = Column(Boolean, default=False, nullable=False)
-    manual = Column(Boolean, default=None, nullable=True)
     visibility = Column(String(255), nullable=True)
 
 
