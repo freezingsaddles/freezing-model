@@ -106,6 +106,7 @@ class Ride(StravaEntity):
         nullable=False,
         index=True,
     )
+    description = Column(String(1024), nullable=True)
     elapsed_time = Column(Integer, nullable=False)  # Seconds
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
