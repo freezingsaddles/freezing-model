@@ -15,6 +15,7 @@ __pycache__/
 *.egg-info/
 .Python
 .eggs/
+.idea/
 .installed.cfg
 .venv/
 build/
@@ -22,6 +23,7 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+env/
 lib/
 lib64/
 parts/
