@@ -63,6 +63,8 @@ class Team(StravaEntity):
     __tablename__ = "teams"
     athletes = orm.relationship("Athlete", backref="team")
     leaderboard_exclude = Column(Boolean, nullable=False, default=False)
+    cover_photo = Column(String(255), nullable=True)
+    profile_photo = Column(String(255), nullable=True)
 
 
 class Athlete(StravaEntity):
