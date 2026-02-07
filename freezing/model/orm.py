@@ -269,6 +269,9 @@ class RideWeather(Base):
     day_temp_min = Column(Float, nullable=True)
     day_temp_max = Column(Float, nullable=True)
 
+    wind_speed = Column(Float, nullable=True)
+    wind_gust = Column(Float, nullable=True)
+
     sunrise = Column(Time, nullable=True)
     sunset = Column(Time, nullable=True)
 
