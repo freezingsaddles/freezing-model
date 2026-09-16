@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Any, Callable, Dict
 
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField
 
 
 class BaseMessage:

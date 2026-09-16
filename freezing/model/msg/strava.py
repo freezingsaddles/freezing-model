@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict
 
 import arrow
 from marshmallow import Schema, fields, post_load, pre_load
-from marshmallow_enum import EnumField
 
 from . import BaseMessage, BaseSchema
 
@@ -45,8 +44,8 @@ class SubscriptionSchema(BaseSchema):
     _model_class = Subscription
 
     application_id = fields.Int()
-    object_type = EnumField(ObjectType)
-    aspect_type = EnumField(AspectType)
+    object_type = fields.Enum(ObjectType)
+    aspect_type = fields.Enum(AspectType)
     callback_url = fields.Str()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
@@ -98,8 +97,8 @@ class SubscriptionUpdateSchema(BaseSchema):
     subscription_id = fields.Int()
     owner_id = fields.Int()
     object_id = fields.Int()
-    object_type = EnumField(ObjectType)
-    aspect_type = EnumField(AspectType)
+    object_type = fields.Enum(ObjectType)
+    aspect_type = fields.Enum(AspectType)
     event_time = fields.DateTime()
     updates = fields.Dict()
 
