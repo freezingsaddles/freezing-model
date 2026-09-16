@@ -17,8 +17,7 @@ down_revision = "dd2e35777af9"
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         CREATE OR REPLACE VIEW daily_scores AS
         select
             A.team_id,
@@ -33,15 +32,11 @@ def upgrade():
           A.team_id,
           date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
         ;
-    """.format(
-            config.TIMEZONE
-        )
-    )
+    """.format(config.TIMEZONE))
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         CREATE OR REPLACE VIEW `daily_scores` AS
         select
             `A`.`team_id` AS `team_id`,
@@ -58,5 +53,4 @@ def downgrade():
             `A`.`team_id`,
             cast(`R`.`start_date` as date)
        ;
-    """
-    )
+    """)

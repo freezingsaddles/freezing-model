@@ -6,6 +6,7 @@ Auto-generated from registrants.ps1 by GitHub Copilot.
 Author: @obscurerichard
 Usage: python registrants.py <csvfile>
 """
+
 import csv
 import sys
 from datetime import datetime

@@ -43,7 +43,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "black",
+    "black==26.3.0",
     "fawltydeps",
     "flake8",
     "flake8-bugbear",
@@ -58,7 +58,7 @@ dev = [
     "flake8-simplify",
     "flake8-sorted-keys",
     "flake8-todo",
-    "isort",
+    "isort==9.0.1",
 ]
 
 [tool.isort]

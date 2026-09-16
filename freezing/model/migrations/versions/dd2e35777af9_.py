@@ -19,8 +19,7 @@ down_revision = "23c3b1c5ffb0"
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         create or replace VIEW `weekly_stats` AS
             select
                 `daily_scores`.`athlete_id` AS `athlete_id`,
@@ -52,13 +51,11 @@ def upgrade():
                 `daily_scores`.`team_id`,
                 `daily_scores`.`athlete_id`,
                 week(`daily_scores`.`ride_date`,3);
-    """
-    )
+    """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         create or replace VIEW `weekly_stats` AS
             select
                 `daily_scores`.`athlete_id` AS `athlete_id`,
@@ -91,5 +88,4 @@ def downgrade():
                 `daily_scores`.`athlete_id`,
                 week(`daily_scores`.`ride_date`,0);
        drop view if exists weekly_stats;
-    """
-    )
+    """)
