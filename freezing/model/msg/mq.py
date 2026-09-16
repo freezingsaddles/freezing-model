@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Any, Dict
 
 from marshmallow import fields
-from marshmallow_enum import EnumField
 
 from freezing.model.msg import BaseMessage, BaseSchema
 from freezing.model.msg.strava import AspectType
@@ -39,7 +38,7 @@ class ActivityUpdateSchema(BaseSchema):
 
     _model_class = ActivityUpdate
 
-    operation = EnumField(AspectType)
+    operation = fields.Enum(AspectType)
     athlete_id = fields.Int()
     activity_id = fields.Int()
     event_time = fields.DateTime()
