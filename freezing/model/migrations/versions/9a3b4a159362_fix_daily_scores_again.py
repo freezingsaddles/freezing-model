@@ -16,8 +16,7 @@ down_revision = "f620a24f5f7e"
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
       create or replace view daily_scores as
       select
         A.team_id,
@@ -38,16 +37,12 @@ def upgrade():
         A.team_id,
         ride_date
       ;
-    """.format(
-            config.TIMEZONE
-        )
-    )
+    """.format(config.TIMEZONE))
     pass
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
       create or replace view daily_scores as
       select
         A.team_id,
@@ -68,8 +63,5 @@ def downgrade():
         A.team_id,
         ride_date
       ;
-    """.format(
-            config.TIMEZONE
-        )
-    )
+    """.format(config.TIMEZONE))
     pass

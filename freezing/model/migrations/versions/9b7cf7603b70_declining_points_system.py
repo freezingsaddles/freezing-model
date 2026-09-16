@@ -17,8 +17,7 @@ down_revision = "12a5e1aff276"
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
         create or replace VIEW `daily_scores` as
         select A.team_id, R.athlete_id, sum(R.distance) as distance,
         case
@@ -35,15 +34,11 @@ def upgrade():
           A.team_id,
           date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
         ;
-        """.format(
-            model_config.TIMEZONE
-        )
-    )
+        """.format(model_config.TIMEZONE))
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
         create or replace view daily_scores as
         select A.team_id, R.athlete_id, sum(R.distance) as distance,
         (sum(R.distance) + IF(sum(R.distance) >= 1.0, 10,0)) as points,
@@ -55,7 +50,4 @@ def downgrade():
           A.team_id,
           date(CONVERT_TZ(R.start_date, R.timezone,'{0}'))
         ;
-    """.format(
-            model_config.TIMEZONE
-        )
-    )
+    """.format(model_config.TIMEZONE))

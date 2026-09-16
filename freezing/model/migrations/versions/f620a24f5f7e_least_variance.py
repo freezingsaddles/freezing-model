@@ -15,8 +15,7 @@ down_revision = "b4d003c71167"
 
 
 def upgrade():
-    op.execute(
-        """
+    op.execute("""
              create or replace view variance_by_day as
                 select
                   ds.athlete_id,
@@ -39,14 +38,11 @@ def upgrade():
                 from
                   daily_scores ds
                 group by ds.athlete_id;
-               """
-    )
+               """)
 
 
 def downgrade():
-    op.execute(
-        """
+    op.execute("""
                drop view variance_by_day
                ;
-               """
-    )
+               """)

@@ -223,11 +223,11 @@ class RidePhoto(Base):
 
     @property
     def img_l_dimensions(self):
-        (width, height) = (None, None)
+        width, height = (None, None)
         if self.img_l:
             if self.source == 1:
                 try:
-                    (width, height) = re.match(
+                    width, height = re.match(
                         ".+-(\\d+)x(\\d+)\\.\\w+$", self.img_l
                     ).groups()
                 except AttributeError:
@@ -237,7 +237,7 @@ class RidePhoto(Base):
                         )
                     )
             else:
-                (width, height) = (612, 612)
+                width, height = (612, 612)
         return (width, height)
 
     primary = Column(Boolean, nullable=False, default=False)
