@@ -21,9 +21,7 @@ jobs:
       - name: black Lint
         run: black --check --diff .
       - name: isort Lint
-        uses: isort/isort-action@v1
-        with:
-          requirements-files: "requirements.txt requirements-test.txt"
+        run: isort --check-only --diff .
       - name: flake8 Lint
         uses: py-actions/flake8@v2
         # There are too many errors to start with to fail on this
