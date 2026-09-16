@@ -43,7 +43,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "black==26.3.0",
+    "black==26.5.1",
     "fawltydeps",
     "flake8",
     "flake8-bugbear",
