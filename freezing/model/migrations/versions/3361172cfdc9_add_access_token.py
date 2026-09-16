@@ -16,7 +16,17 @@ from alembic import op
 
 
 def upgrade():
-    op.add_column("athletes", sa.Column("access_token", sa.String(255)))
+    conn = op.get_bind()
+    result = conn.execute(
+        sa.text(
+            "SELECT COUNT(*) FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() "
+            "AND table_name = 'athletes' "
+            "AND column_name = 'access_token'"
+        )
+    )
+    if result.scalar() == 0:
+        op.add_column("athletes", sa.Column("access_token", sa.String(255)))
 
 
 def downgrade():
